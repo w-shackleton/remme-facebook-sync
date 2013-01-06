@@ -349,9 +349,27 @@ public class Preferences extends PreferenceActivity {
 	Preference.OnPreferenceChangeListener syncBirthdaysChange = new Preference.OnPreferenceChangeListener() {
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			try {
-				ContactsSync app = ContactsSync.getInstance();
-				app.setSyncBirthdays((Boolean) newValue);
-				return true;
+				final ContactsSync app = ContactsSync.getInstance();
+				
+				if ((Boolean) newValue == true) {
+					new AlertDialog.Builder(Preferences.this)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle("Confirm")
+					.setMessage("This feature only works on some devices.\nIt may even cause crashes or freezes on few devices.\nAre you sure you want to continue?")
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							app.setSyncBirthdays(true);
+							((CheckBoxPreference) findPreference("sync_birthdays")).setChecked(true);
+						}
+					})
+					.setNegativeButton("No", null)
+					.show();
+					return false;
+				} else {
+					app.setSyncBirthdays(false);
+					return true;
+				}
 			} catch (Exception e) {
 				Log.d("contactsync-preferences", "error: " + e.getMessage());
 				return false;
