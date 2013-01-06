@@ -235,7 +235,6 @@ public final class Util {
             // Error Stream contains JSON that we can parse to a FB error
             response = read(conn.getErrorStream());
         }
-        Log.v("facebookRequest", "response: " + response);
         return response;
     }
 

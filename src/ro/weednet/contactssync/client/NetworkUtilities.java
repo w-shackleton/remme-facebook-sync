@@ -74,13 +74,10 @@ final public class NetworkUtilities {
 	 * @throws NetworkErrorException 
 	 */
 	public boolean checkAccessToken() throws NetworkErrorException {
-	//	throw new NetworkErrorException("custom");
 		
 		try {
 			Bundle params = new Bundle();
 			params.putInt("timeout", ContactsSync.getInstance().getConnectionTimeout() * 1000);
-			
-			mFacebook.extendAccessTokenIfNeeded(ContactsSync.getInstance(), null);
 			
 			try {
 				String response = mFacebook.request("me/permissions", params);
@@ -89,26 +86,20 @@ final public class NetworkUtilities {
 				for (int i = 0; i < Authenticator.REQUIRED_PERMISSIONS.length; i++) {
 					if (permissions.isNull(Authenticator.REQUIRED_PERMISSIONS[i])
 					 || permissions.getInt(Authenticator.REQUIRED_PERMISSIONS[i]) == 0) {
-						Log.v("checkToken", "failed because of permissions");
 						return false;
 					}
 				}
 				return true;
 			} catch (FacebookError e) {
-				Log.v("checkToken", "facebook error, code: " + e.getErrorCode() + ", message: " + e.getMessage());
 				if (!e.getErrorType().equals("OAuthException")) {
 					throw new NetworkErrorException(e.getMessage());
 				}
 			} catch (JSONException e) {
-				Log.v("checkToken", "json error: " + e.getMessage());
 				throw new NetworkErrorException(e.getMessage());
 			}
 		} catch (IOException e) {
-			Log.v("checkToken", "ioexception: " + e.getMessage());
 			throw new NetworkErrorException(e.getMessage());
 		}
-		
-		Log.v("checkToken", "failed. returning false.");
 		
 		return false;
 	}
@@ -158,7 +149,7 @@ final public class NetworkUtilities {
 			Bundle params = new Bundle();
 			
 			if (album_picture) {
-				limit = 300;
+				limit = 20;
 				String query1 = "SELECT " + fields + " FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = me()) LIMIT " + limit + " OFFSET " + offset;
 				String query2 = "SELECT owner, src_big, modified FROM photo WHERE pid IN (SELECT cover_pid FROM album WHERE owner IN (SELECT uid FROM #query1) AND type = 'profile')";
 				params.putString("method", "fql.multiquery");

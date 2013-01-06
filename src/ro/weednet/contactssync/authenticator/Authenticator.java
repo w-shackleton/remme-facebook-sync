@@ -90,7 +90,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		if (!authTokenType.equals(Constants.AUTHTOKEN_TYPE)) {
 			final Bundle result = new Bundle();
 			result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
-			Log.v(TAG, "invalid authTokenType (" + authTokenType + ")");
 			return result;
 		}
 		
@@ -98,7 +97,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		// the server for an appropriate AuthToken.
 		final AccountManager am = AccountManager.get(mContext);
 		final String authToken = am.getPassword(account);
-		Log.v(TAG, "stored token: " + authToken);
 		if (authToken != null) {
 			NetworkUtilities nu = new NetworkUtilities(authToken);
 			if (nu.checkAccessToken()) {
