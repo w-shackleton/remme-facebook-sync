@@ -222,6 +222,7 @@ public class ContactManager {
 		
 		contactOp
 				.addName(rawContact.getFirstName(), rawContact.getLastName())
+				.addEmail(rawContact.getEmail())
 				.addGroupMembership(groupId)
 				.addAvatar(rawContact.getAvatarUrl());
 		
