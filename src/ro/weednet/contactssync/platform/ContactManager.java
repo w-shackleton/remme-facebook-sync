@@ -32,6 +32,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.CommonDataKinds.Im;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
@@ -242,7 +243,7 @@ public class ContactManager {
 		
 		boolean existingBirthday = false;
 		boolean existingAvatar = false;
-	//	boolean existingEmail = false;
+		boolean existingEmail = false;
 	//	boolean existingCellPhone = false;
 	//	boolean existingHomePhone = false;
 	//	boolean existingWorkPhone = false;
@@ -282,11 +283,11 @@ public class ContactManager {
 								c.getString(DataQuery.COLUMN_PHONE_NUMBER),
 								"5345345", uri);
 					}
+				*/
 				} else if (mimeType.equals(Email.CONTENT_ITEM_TYPE)) {
 					existingEmail = true;
-					contactOp.updateEmail("asdfadsf@asd.ro",
+					contactOp.updateEmail(rawContact.getEmail(),
 							c.getString(DataQuery.COLUMN_EMAIL_ADDRESS), uri);
-			*/
 				} else if (ContactsSync.getInstance().getSyncBirthdays()
 				        && mimeType.equals(Event.CONTENT_ITEM_TYPE)) {
 					if (c.getInt(DataQuery.COLUMN_BIRTHDAY_TYPE) == Event.TYPE_BIRTHDAY) {
@@ -319,9 +320,9 @@ public class ContactManager {
 	//		contactOp.addPhone("34342", Phone.TYPE_WORK);
 	//	}
 		// Add the email address, if present and not updated above
-	//	if (!existingEmail) {
-	//		contactOp.addEmail("fdsfs@asd.ro");
-	//	}
+		if (!existingEmail) {
+			contactOp.addEmail(rawContact.getEmail());
+		}
 		// Add the avatar if we didn't update the existing avatar
 		if (!existingAvatar) {
 			contactOp.addAvatar(rawContact.getAvatarUrl());

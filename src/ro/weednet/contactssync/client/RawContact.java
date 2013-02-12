@@ -44,6 +44,7 @@ final public class RawContact {
 	
 	private final long mRawContactId;
 	private final String mUid;
+	private final String mEmail;
 	private final String mFirstName;
 	private final String mLastName;
 	private final String mAvatarUrl;
@@ -58,6 +59,9 @@ final public class RawContact {
 	}
 	public String getUid() {
 		return mUid;
+	}
+	public String getEmail() {
+		return mEmail;
 	}
 	public String getFirstName() {
 		return mFirstName;
@@ -126,11 +130,12 @@ final public class RawContact {
 		return json;
 	}
 	
-	public RawContact(long rawContactId, String uid, String firstName, String lastName, String birthday,
+	public RawContact(long rawContactId, String uid, String email, String firstName, String lastName, String birthday,
 			String statusMessage, long statusTimestamp, String avatarUrl,
 			long syncState) {
 		mRawContactId = rawContactId;
 		mUid = uid;
+		mEmail = email;
 		mFirstName = firstName;
 		mLastName = lastName;
 		mAvatarUrl = avatarUrl;
@@ -150,15 +155,18 @@ final public class RawContact {
 				throw new JSONException("JSON contact missing required 'uid' field");
 			}
 			
+			final String email = !contact.isNull("username") ?
+					contact.getString("username") + "@facebook.com" : null;
 			final String firstName = !contact.isNull("first_name") ?
 					contact.getString("first_name") : null;
 			final String lastName = !contact.isNull("last_name") ?
 					contact.getString("last_name") : null;
 			final String avatarUrl = !contact.isNull("picture") ?
 					contact.getString("picture") : null;
-			final String birthDay = !contact.isNull("birthday_date") ?
-					contact.getString("birthday_date") :
-						(!contact.isNull("birthday") ? contact.getString("birthday") : null);
+			final String birthDay = "--03-02";
+			//!contact.isNull("birthday_date") ?
+			//		contact.getString("birthday_date") :
+			//			(!contact.isNull("birthday") ? contact.getString("birthday") : null);
 			String statusMessage = null;
 			long statusTimestamp = 0;
 			if (!contact.isNull("status")) {
@@ -171,17 +179,17 @@ final public class RawContact {
 				}
 			}
 			final long syncState = !contact.isNull("x") ? contact.getLong("x") : 0;
-			return new RawContact(0, uid, firstName, lastName, birthDay, statusMessage, statusTimestamp, avatarUrl, syncState);
+			return new RawContact(0, uid, email, firstName, lastName, birthDay, statusMessage, statusTimestamp, avatarUrl, syncState);
 		} catch (final Exception ex) {
 			Log.i(TAG, "Error parsing JSON contact object" + ex.toString());
 		}
 		return null;
 	}
 	
-	public static RawContact create(String uid, String firstName, String lastName, String birthDay) {
-		return new RawContact(0, uid, firstName, lastName, birthDay, null, 0, null, -1);
+	public static RawContact create(String uid, String email, String firstName, String lastName, String birthDay) {
+		return new RawContact(0, uid, email, firstName, lastName, birthDay, null, 0, null, -1);
 	}
 	public static RawContact create(long rawContactId, String uid) {
-		return new RawContact(rawContactId, uid, null, null, null, null, 0, null, -1);
+		return new RawContact(rawContactId, uid, null, null, null, null, null, 0, null, -1);
 	}
 }
