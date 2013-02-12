@@ -164,8 +164,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 				app.setConnectionTimeout(Preferences.DEFAULT_CONNECTION_TIMEOUT);
 				app.savePreferences();
 				
-				//TODO: change to email or use fallback
-				final String username = user.getUsername();
+				final String username = (String) user.getProperty("email");
 				final String access_token = Session.getActiveSession().getAccessToken();
 				final int sync_freq = app.getSyncFrequency() * 3600;
 				
