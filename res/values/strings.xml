@@ -26,6 +26,8 @@
 	<string name="prefs_sync_statuses_summary">Import your friends\' statuses (only status updates, not comments, links, checkings, etc)</string>
 	<string name="prefs_sync_birthdays_title">Sync birthdays</string>
 	<string name="prefs_sync_birthdays_summary">Add birthdays to your contacts</string>
+	<string name="prefs_sync_birthday_format_title">Birthday format</string>
+	<string name="prefs_sync_birthday_format_summary"></string>
 	<string name="prefs_sync_join_by_id_title">Join by Facebook ID</string>
 	<string name="prefs_sync_join_by_id_summary">Join contacts with different names by using the Facebook ID from Notes field</string>
 	<string name="prefs_cat_troubleshoot_title">Troubleshooting</string>

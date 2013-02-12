@@ -38,6 +38,12 @@ final public class RawContact {
 		public final static int BIG_SQUARE = 5;
 		public final static int HUGE_SQUARE = 6;
 	};
+	public class BIRTHDAY_FORMATS {
+		public final static int DEFAULT = 0;
+		public final static int GLOBAL = 1;
+		public final static int US = 2;
+		public final static int EU = 3;
+	};
 	
 	/** The tag used to log to adb console. **/
 	private static final String TAG = "RawContact";
@@ -163,10 +169,8 @@ final public class RawContact {
 					contact.getString("last_name") : null;
 			final String avatarUrl = !contact.isNull("picture") ?
 					contact.getString("picture") : null;
-			final String birthDay = "--03-02";
-			//!contact.isNull("birthday_date") ?
-			//		contact.getString("birthday_date") :
-			//			(!contact.isNull("birthday") ? contact.getString("birthday") : null);
+			final String birthDay = !contact.isNull("birthday_date") ?
+					contact.getString("birthday_date") : null;
 			String statusMessage = null;
 			long statusTimestamp = 0;
 			if (!contact.isNull("status")) {

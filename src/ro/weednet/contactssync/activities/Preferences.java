@@ -69,6 +69,7 @@ public class Preferences extends PreferenceActivity {
 	public final static boolean DEFAULT_SYNC_WIFI_ONLY = false;
 	public final static boolean DEFAULT_JOIN_BY_ID = false;
 	public final static boolean DEFAULT_SYNC_BIRTHDAYS = false;
+	public final static int DEFAULT_BIRTHDAY_FORMAT = 0;
 	public final static boolean DEFAULT_SYNC_STATUSES = true;
 	public final static boolean DEFAULT_SHOW_NOTIFICATIONS = false;
 	public final static int DEFAULT_CONNECTION_TIMEOUT = 60;
@@ -144,7 +145,8 @@ public class Preferences extends PreferenceActivity {
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		
+		//TODO: use current/selected account (not the first one)
+		Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
 		addPreferencesFromResource(R.xml.preferences_about);
@@ -184,6 +186,7 @@ public class Preferences extends PreferenceActivity {
 			findPreference("sync_wifi_only").setOnPreferenceChangeListener(syncWifiOnlyChange);
 			findPreference("sync_join_by_id").setOnPreferenceChangeListener(syncJoinByIdChange);
 			findPreference("sync_birthdays").setOnPreferenceChangeListener(syncBirthdaysChange);
+			findPreference("birthday_format").setOnPreferenceChangeListener(birthdayFormatChange);
 			findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
 			findPreference("show_notif").setOnPreferenceChangeListener(showNotificationsChange);
 			findPreference("conn_timeout").setOnPreferenceChangeListener(connectionTimeoutChange);
@@ -378,6 +381,19 @@ public class Preferences extends PreferenceActivity {
 					app.setSyncBirthdays(false);
 					return true;
 				}
+			} catch (Exception e) {
+				Log.d("contactsync-preferences", "error: " + e.getMessage());
+				return false;
+			}
+		}
+	};
+	Preference.OnPreferenceChangeListener birthdayFormatChange = new Preference.OnPreferenceChangeListener() {
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			try {
+				ContactsSync app = ContactsSync.getInstance();
+				app.setBirthdayFormat(Integer.parseInt((String) newValue));
+				app.savePreferences();
+				return true;
 			} catch (Exception e) {
 				Log.d("contactsync-preferences", "error: " + e.getMessage());
 				return false;
