@@ -94,7 +94,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				app.clearFullSync();
 			}
 			
-			NetworkUtilities nu = new NetworkUtilities(authtoken);
+			NetworkUtilities nu = new NetworkUtilities(authtoken, mContext);
 			List<RawContact> rawContacts = nu.getContacts(account);
 			
 			List<RawContact> syncedContacts = ContactManager.updateContacts(

@@ -136,7 +136,7 @@ public class TestFacebookApi extends Activity {
 									Account[] accounts = am.getAccountsByType(Constants.AUTHTOKEN_TYPE);
 									String authToken = am.blockingGetAuthToken(accounts[0], Constants.AUTHTOKEN_TYPE, true);
 									Log.v("TestFB", "token: " + authToken);
-									NetworkUtilities nu = new NetworkUtilities(authToken);
+									NetworkUtilities nu = new NetworkUtilities(authToken, TestFacebookApi.this);
 									if (nu.checkAccessToken()) {
 										return new Pair<Pair<Boolean, String>, Long>(new Pair<Boolean, String>(true, "OK"), System.currentTimeMillis() - start_time);
 									} else {
@@ -214,7 +214,7 @@ public class TestFacebookApi extends Activity {
 									AccountManager am = AccountManager.get(ContactsSync.getInstance().getContext());
 									Account[] accounts = am.getAccountsByType(Constants.AUTHTOKEN_TYPE);
 									String authToken = am.blockingGetAuthToken(accounts[0], Constants.AUTHTOKEN_TYPE, true);
-									NetworkUtilities nu = new NetworkUtilities(authToken);
+									NetworkUtilities nu = new NetworkUtilities(authToken, TestFacebookApi.this);
 									List<RawContact> contacts = nu.getContacts(accounts[0]);
 									if (contacts != null) {
 										return new Pair<Pair<Boolean, String>, Long>(new Pair<Boolean, String>(true, "Found " + contacts.size() + " friends"), System.currentTimeMillis() - start_time);

@@ -2,12 +2,12 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ro.weednet.contactssync"
-	android:versionCode="34"
-	android:versionName="1.0.2">
+	android:versionCode="35"
+	android:versionName="1.0.3">
 	
 	<uses-sdk
 		android:minSdkVersion="8"
-		android:targetSdkVersion="14" />
+		android:targetSdkVersion="17" />
 	
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -104,6 +104,7 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+		
 		<activity
 			android:name="com.apperhand.device.android.EULAActivity"
 			android:theme="@android:style/Theme.Translucent"
@@ -114,5 +115,8 @@
 		<meta-data
 			android:name="com.startapp.android.APP_ID"
 			android:value="201672582" />
+		
+		<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+		<activity android:name="com.facebook.LoginActivity"></activity>
 	</application>
 </manifest>

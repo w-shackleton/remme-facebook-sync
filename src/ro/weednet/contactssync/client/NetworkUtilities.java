@@ -31,12 +31,19 @@ import org.json.JSONObject;
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.authenticator.Authenticator;
 
-import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
-import com.facebook.android.Util;
+import com.facebook.AccessToken;
+import com.facebook.FacebookException;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Request.Callback;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
+import com.facebook.SessionState;
 
 import android.accounts.Account;
 import android.accounts.NetworkErrorException;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -56,10 +63,21 @@ import java.util.List;
  * Provides utility methods for communicating with the server.
  */
 final public class NetworkUtilities {
-	private Facebook mFacebook = new Facebook("104789639646317");
+	private Session mSession;
 	
-	public NetworkUtilities(String token) {
-		mFacebook.setAccessToken(token);
+	public NetworkUtilities(String token, Context context) {
+		AccessToken accessToken = AccessToken.createFromExistingAccessToken(token, null, null, null, null);
+		mSession = Session.getActiveSession();
+		if (mSession == null) {
+			mSession = Session.openActiveSessionWithAccessToken(context, accessToken,
+				new StatusCallback() {
+				
+				@Override
+				public void call(Session session, SessionState state, Exception exception) {
+					
+				}
+			});
+		}
 	}
 	
 	/**
@@ -74,15 +92,28 @@ final public class NetworkUtilities {
 	 * @throws NetworkErrorException 
 	 */
 	public boolean checkAccessToken() throws NetworkErrorException {
-		
-		try {
-			Bundle params = new Bundle();
-			params.putInt("timeout", ContactsSync.getInstance().getConnectionTimeout() * 1000);
-			
+	//	try {
+		//	params.putInt("timeout", ContactsSync.getInstance().getConnectionTimeout() * 1000);
 			try {
-				String response = mFacebook.request("me/permissions", params);
-				JSONObject json = Util.parseJson(response);
+			//	String response = mFacebook.request("me/permissions", params);
+			//	JSONObject json = Util.parseJson(response);
+			//	JSONObject permissions = json.getJSONArray("data").getJSONObject(0);
+				
+				Request request = new Request(mSession, "me/permissions");
+				request.setCallback(new Callback() {
+					@Override
+					public void onCompleted(Response response) {
+						if (response.getError() != null) {
+							Log.w("fb check", "error " + response.getError().toString());
+						} else {
+							Log.w("fb check", "ok ");
+						}
+					}
+				});
+				Response response = request.executeAndWait();
+				JSONObject json = response.getGraphObject().getInnerJSONObject();
 				JSONObject permissions = json.getJSONArray("data").getJSONObject(0);
+				
 				for (int i = 0; i < Authenticator.REQUIRED_PERMISSIONS.length; i++) {
 					if (permissions.isNull(Authenticator.REQUIRED_PERMISSIONS[i])
 					 || permissions.getInt(Authenticator.REQUIRED_PERMISSIONS[i]) == 0) {
@@ -90,16 +121,17 @@ final public class NetworkUtilities {
 					}
 				}
 				return true;
-			} catch (FacebookError e) {
-				if (!e.getErrorType().equals("OAuthException")) {
+			} catch (FacebookException e) {
+				Log.w("fb check", "error " + e.toString());
+				if (!e.getMessage().equals("OAuthException")) {
 					throw new NetworkErrorException(e.getMessage());
 				}
 			} catch (JSONException e) {
 				throw new NetworkErrorException(e.getMessage());
 			}
-		} catch (IOException e) {
-			throw new NetworkErrorException(e.getMessage());
-		}
+	//	} catch (IOException e) {
+	//		throw new NetworkErrorException(e.getMessage());
+	//	}
 		
 		return false;
 	}
@@ -132,7 +164,7 @@ final public class NetworkUtilities {
 				break;
 		}
 		
-		String fields = "uid, first_name, last_name, " + pic_size;
+		String fields = "uid, username, first_name, last_name, " + pic_size;
 		
 		if (app.getSyncStatuses()) {
 			fields += ", status";
@@ -161,14 +193,16 @@ final public class NetworkUtilities {
 				params.putString("query", query);
 			}
 			params.putInt("timeout", app.getConnectionTimeout() * 1000);
-			String response = mFacebook.request(params);
+			Request request = Request.newRestRequest(mSession, "fql.query", params, HttpMethod.GET);
+			Response response = request.executeAndWait();
 			
 			if (response != null) {
 				try {
 					JSONArray serverContacts;
 					HashMap<String, JSONObject> serverImages = new HashMap<String, JSONObject>();
 					if (album_picture) {
-						JSONArray result = new JSONArray(response);
+						JSONArray result = response.getGraphObjectList().getInnerJSONArray();
+						Log.d("NUget", result.toString());
 						serverContacts = result.getJSONObject(0).getJSONArray("fql_result_set");
 						JSONArray images = result.getJSONObject(1).getJSONArray("fql_result_set");
 						JSONObject image;
@@ -177,7 +211,7 @@ final public class NetworkUtilities {
 							serverImages.put(image.getString("owner"), image);
 						}
 					} else {
-						serverContacts = new JSONArray(response);
+						serverContacts = response.getGraphObjectList().getInnerJSONArray();
 					}
 					
 					JSONObject contact;
@@ -198,24 +232,29 @@ final public class NetworkUtilities {
 						offset += limit;
 						more = true;
 					}
-				} catch (Exception e) {
-					try {
-						JSONObject r = new JSONObject(response);
-						if (!r.isNull("error_code") && r.getInt("error_code") == 190) {
-							throw new AuthenticationException();
-						}
-						else
-						{
-							throw new ParseException(r.getString("error_msg"));
-						}
-					} catch (JSONException e2) { }
+				} catch (FacebookException e) {
+					Log.e("NUsyncc", "FB "+e.getMessage());
+					//	try {
+						//JSONObject r = new JSONObject(response);
+					//	if (!r.isNull("error_code") && r.getInt("error_code") == 190) {
+					//		throw new AuthenticationException();
+					//	}
+					//	else
+					//	{
+					//		throw new ParseException(r.getString("error_msg"));
+					//	}
+				//	} catch (JSONException e2) { }
 					
-					Log.e("network_utils", "api error");
+				//	Log.e("network_utils", "api error");
+					throw new ParseException();
+				} catch (JSONException e) {
+					Log.e("NUsyncc", "JSON "+e.getMessage());
+				//	Log.e("network_utils", "api error");
 					throw new ParseException();
 				}
 			} else {
 				Log.e("network_utils", "Server error");
-				throw new IOException();
+				throw new IOException("unko");
 			}
 		}
 		

@@ -98,7 +98,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		final AccountManager am = AccountManager.get(mContext);
 		final String authToken = am.getPassword(account);
 		if (authToken != null) {
-			NetworkUtilities nu = new NetworkUtilities(authToken);
+			NetworkUtilities nu = new NetworkUtilities(authToken, mContext);
 			if (nu.checkAccessToken()) {
 				Log.v(TAG, "getAuthToken() GOOD");
 				final Bundle result = new Bundle();
