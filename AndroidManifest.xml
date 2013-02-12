@@ -3,11 +3,11 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ro.weednet.contactssync"
 	android:versionCode="35"
-	android:versionName="1.0.3">
+	android:versionName="1.1.0">
 	
 	<uses-sdk
 		android:minSdkVersion="8"
-		android:targetSdkVersion="17" />
+		android:targetSdkVersion="16" />
 	
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
