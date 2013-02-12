@@ -232,7 +232,7 @@ final public class NetworkUtilities {
 					} else {
 						contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
 					}
-					if (contact.getString("birthday_date") != null
+					if (contact.has("birthday_date") && contact.getString("birthday_date") != null
 					 && app.getSyncBirthdays() && app.getBirthdayFormat() != RawContact.BIRTHDAY_FORMATS.DEFAULT) {
 						try {
 							DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
@@ -263,9 +263,9 @@ final public class NetworkUtilities {
 					more = true;
 				}
 			} catch (FacebookException e) {
-				throw new ParseException();
+				throw new ParseException(e.getMessage());
 			} catch (JSONException e) {
-				throw new ParseException();
+				throw new ParseException(e.getMessage());
 			}
 		}
 		
