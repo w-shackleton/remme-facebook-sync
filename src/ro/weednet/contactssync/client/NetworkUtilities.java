@@ -35,7 +35,6 @@ import com.facebook.AccessToken;
 import com.facebook.FacebookException;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
-import com.facebook.Request.Callback;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Session.StatusCallback;
@@ -43,6 +42,7 @@ import com.facebook.SessionState;
 
 import android.accounts.Account;
 import android.accounts.NetworkErrorException;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,7 +55,10 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,50 +95,44 @@ final public class NetworkUtilities {
 	 * @throws NetworkErrorException 
 	 */
 	public boolean checkAccessToken() throws NetworkErrorException {
-	//	try {
+		//TODO: try to re-use timeout values (or remove preferences options
 		//	params.putInt("timeout", ContactsSync.getInstance().getConnectionTimeout() * 1000);
-			try {
-			//	String response = mFacebook.request("me/permissions", params);
-			//	JSONObject json = Util.parseJson(response);
-			//	JSONObject permissions = json.getJSONArray("data").getJSONObject(0);
-				
-				Request request = new Request(mSession, "me/permissions");
-				request.setCallback(new Callback() {
-					@Override
-					public void onCompleted(Response response) {
-						if (response.getError() != null) {
-							Log.w("fb check", "error " + response.getError().toString());
-						} else {
-							Log.w("fb check", "ok ");
-						}
-					}
-				});
-				Response response = request.executeAndWait();
-				JSONObject json = response.getGraphObject().getInnerJSONObject();
-				JSONObject permissions = json.getJSONArray("data").getJSONObject(0);
-				
-				for (int i = 0; i < Authenticator.REQUIRED_PERMISSIONS.length; i++) {
-					if (permissions.isNull(Authenticator.REQUIRED_PERMISSIONS[i])
-					 || permissions.getInt(Authenticator.REQUIRED_PERMISSIONS[i]) == 0) {
-						return false;
-					}
-				}
-				return true;
-			} catch (FacebookException e) {
-				Log.w("fb check", "error " + e.toString());
-				if (!e.getMessage().equals("OAuthException")) {
-					throw new NetworkErrorException(e.getMessage());
-				}
-			} catch (JSONException e) {
-				throw new NetworkErrorException(e.getMessage());
-			}
-	//	} catch (IOException e) {
-	//		throw new NetworkErrorException(e.getMessage());
-	//	}
 		
-		return false;
+		if (!mSession.isOpened()) {
+			return false;
+		}
+		
+		try {
+			Request request = new Request(mSession, "me/permissions");
+			Response response = request.executeAndWait();
+			
+			if (response.getError() != null) {
+				if (response.getError().getErrorCode() == 190) {
+					return false;
+				} else {
+					throw new NetworkErrorException(response.getError().getErrorMessage());
+				}
+			}
+			
+			JSONObject json = response.getGraphObject().getInnerJSONObject();
+			JSONObject permissions = json.getJSONArray("data").getJSONObject(0);
+			
+			for (int i = 0; i < Authenticator.REQUIRED_PERMISSIONS.length; i++) {
+				if (permissions.isNull(Authenticator.REQUIRED_PERMISSIONS[i])
+				 || permissions.getInt(Authenticator.REQUIRED_PERMISSIONS[i]) == 0) {
+					return false;
+				}
+			}
+		} catch (FacebookException e) {
+			throw new NetworkErrorException(e.getMessage());
+		} catch (JSONException e) {
+			throw new NetworkErrorException(e.getMessage());
+		}
+		
+		return true;
 	}
 	
+	@SuppressLint("SimpleDateFormat")
 	public List<RawContact> getContacts(Account account)
 			throws JSONException, ParseException, IOException, AuthenticationException {
 		
@@ -170,7 +167,7 @@ final public class NetworkUtilities {
 			fields += ", status";
 		}
 		if (app.getSyncBirthdays()) {
-			fields += ", birthday, birthday_date";
+			fields += ", birthday_date";
 		}
 		
 		boolean more = true;
@@ -196,65 +193,79 @@ final public class NetworkUtilities {
 			Request request = Request.newRestRequest(mSession, "fql.query", params, HttpMethod.GET);
 			Response response = request.executeAndWait();
 			
-			if (response != null) {
-				try {
-					JSONArray serverContacts;
-					HashMap<String, JSONObject> serverImages = new HashMap<String, JSONObject>();
-					if (album_picture) {
-						JSONArray result = response.getGraphObjectList().getInnerJSONArray();
-						Log.d("NUget", result.toString());
-						serverContacts = result.getJSONObject(0).getJSONArray("fql_result_set");
-						JSONArray images = result.getJSONObject(1).getJSONArray("fql_result_set");
-						JSONObject image;
-						for (int j = 0; j < images.length(); j++) {
-							image = images.getJSONObject(j);
-							serverImages.put(image.getString("owner"), image);
-						}
+			if (response == null) {
+				throw new IOException();
+			}
+			if (response.getGraphObjectList() == null) {
+				if (response.getError() != null) {
+					if (response.getError().getErrorCode() == 190) {
+						throw new AuthenticationException();
 					} else {
-						serverContacts = response.getGraphObjectList().getInnerJSONArray();
+						throw new ParseException(response.getError().getErrorMessage());
 					}
-					
-					JSONObject contact;
-					for (int i = 0; i < serverContacts.length(); i++) {
-						contact = serverContacts.getJSONObject(i);
-						if (album_picture && serverImages.containsKey(contact.getString("uid"))) {
-							contact.put("picture", serverImages.get(contact.getString("uid")).getString("src_big"));
-						} else {
-							contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
-						}
-						RawContact rawContact = RawContact.valueOf(contact);
-						if (rawContact != null) {
-							serverList.add(rawContact);
-						}
-					}
-					
-					if (serverContacts.length() > limit / 2) {
-						offset += limit;
-						more = true;
-					}
-				} catch (FacebookException e) {
-					Log.e("NUsyncc", "FB "+e.getMessage());
-					//	try {
-						//JSONObject r = new JSONObject(response);
-					//	if (!r.isNull("error_code") && r.getInt("error_code") == 190) {
-					//		throw new AuthenticationException();
-					//	}
-					//	else
-					//	{
-					//		throw new ParseException(r.getString("error_msg"));
-					//	}
-				//	} catch (JSONException e2) { }
-					
-				//	Log.e("network_utils", "api error");
-					throw new ParseException();
-				} catch (JSONException e) {
-					Log.e("NUsyncc", "JSON "+e.getMessage());
-				//	Log.e("network_utils", "api error");
+				} else {
 					throw new ParseException();
 				}
-			} else {
-				Log.e("network_utils", "Server error");
-				throw new IOException("unko");
+			}
+			
+			try {
+				JSONArray serverContacts;
+				HashMap<String, JSONObject> serverImages = new HashMap<String, JSONObject>();
+				if (album_picture) {
+					JSONArray result = response.getGraphObjectList().getInnerJSONArray();
+					serverContacts = result.getJSONObject(0).getJSONArray("fql_result_set");
+					JSONArray images = result.getJSONObject(1).getJSONArray("fql_result_set");
+					JSONObject image;
+					for (int j = 0; j < images.length(); j++) {
+						image = images.getJSONObject(j);
+						serverImages.put(image.getString("owner"), image);
+					}
+				} else {
+					serverContacts = response.getGraphObjectList().getInnerJSONArray();
+				}
+				
+				JSONObject contact;
+				for (int i = 0; i < serverContacts.length(); i++) {
+					contact = serverContacts.getJSONObject(i);
+					if (album_picture && serverImages.containsKey(contact.getString("uid"))) {
+						contact.put("picture", serverImages.get(contact.getString("uid")).getString("src_big"));
+					} else {
+						contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
+					}
+					if (contact.getString("birthday_date") != null
+					 && app.getSyncBirthdays() && app.getBirthdayFormat() != RawContact.BIRTHDAY_FORMATS.DEFAULT) {
+						try {
+							DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+							Date date = formatter.parse(contact.getString("birthday_date"));
+							switch(ContactsSync.getInstance().getBirthdayFormat()) {
+								case RawContact.BIRTHDAY_FORMATS.GLOBAL:
+									contact.put("birthday_date",new SimpleDateFormat("yyyy-MM-dd").format(date));
+									break;
+								case RawContact.BIRTHDAY_FORMATS.US:
+									//already there
+									break;
+								case RawContact.BIRTHDAY_FORMATS.EU:
+									contact.put("birthday_date",new SimpleDateFormat("dd/MM/yyyy").format(date));
+									break;
+							}
+						} catch (java.text.ParseException e) {
+							contact.remove("birthday_date");
+						}
+					}
+					RawContact rawContact = RawContact.valueOf(contact);
+					if (rawContact != null) {
+						serverList.add(rawContact);
+					}
+				}
+				
+				if (serverContacts.length() > limit / 2) {
+					offset += limit;
+					more = true;
+				}
+			} catch (FacebookException e) {
+				throw new ParseException();
+			} catch (JSONException e) {
+				throw new ParseException();
 			}
 		}
 		
@@ -301,7 +312,7 @@ final public class NetworkUtilities {
 							targetWidth  = 256;
 							targetHeight = 256;
 					}
-					Log.v("pic_size", "w:"+targetWidth + ", h:"+targetHeight);
+				//	Log.v("pic_size", "w:"+targetWidth + ", h:"+targetHeight);
 					
 					int cropWidth = Math.min(originalImage.getWidth(), originalImage.getHeight());
 					int cropHeight = cropWidth;
