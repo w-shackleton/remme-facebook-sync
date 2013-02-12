@@ -90,10 +90,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 		
 		Session session = Session.getActiveSession();
 		
-		if (session != null && session.isClosed()) {
-			Log.d("fb-auth", "session closing ..");
-			session.closeAndClearTokenInformation();
-			session = null;
+		if (session != null) {
+			if (session.isClosed() || session.isOpened()) {
+				Log.d("fb-auth", "cannot reuse session, closing ..");
+				session.closeAndClearTokenInformation();
+				session = null;
+			}
 		}
 		
 		if (session == null) {
@@ -137,9 +139,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 		session.addCallback(mStatusCallback);
 		
 		if (!session.isOpened() && !session.isClosed()) {
+			Log.d("fb-auth", "session openging");
 			Session.OpenRequest or = new Session.OpenRequest(this);
 			or.setPermissions(Arrays.asList(Authenticator.REQUIRED_PERMISSIONS));
 			session.openForRead(or);
+		} else {
+			Log.d("fb-auth", "session else");
 		}
 	}
 	
