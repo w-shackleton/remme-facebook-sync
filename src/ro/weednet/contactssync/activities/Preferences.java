@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.appbrain.AppBrain;
+
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
@@ -256,6 +258,12 @@ public class Preferences extends PreferenceActivity {
 			});
 			mAuthDialog.show();
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		AppBrain.getAds().maybeShowInterstitial(this);
+		finish();
 	}
 	
 	Preference.OnPreferenceChangeListener syncFreqChange = new Preference.OnPreferenceChangeListener() {

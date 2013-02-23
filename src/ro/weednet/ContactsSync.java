@@ -22,6 +22,8 @@
  */
 package ro.weednet;
 
+import com.appbrain.AppBrain;
+
 import ro.weednet.contactssync.activities.Preferences;
 import ro.weednet.contactssync.client.RawContact;
 import android.app.Application;
@@ -67,6 +69,7 @@ public class ContactsSync extends Application {
 		_instance = this;
 		
 		reloadPreferences();
+		AppBrain.initApp(this);
 	}
 	
 	public int getSyncFrequency() {
