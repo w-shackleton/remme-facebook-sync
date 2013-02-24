@@ -273,8 +273,7 @@ public class Preferences extends PreferenceActivity {
 		ContactsSync app = ContactsSync.getInstance();
 		
 		if (!app.getDisableAds()) {
-			//TODO: change back to maybe
-			AppBrain.getAds().showInterstitial(this);
+			AppBrain.getAds().maybeShowInterstitial(this);
 		}
 		
 		finish();
