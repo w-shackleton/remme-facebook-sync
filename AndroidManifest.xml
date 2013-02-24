@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ro.weednet.contactssync"
-	android:versionCode="36"
-	android:versionName="1.1.0">
+	android:versionCode="37"
+	android:versionName="1.1.1">
 	
 	<uses-sdk
 		android:minSdkVersion="8"
@@ -55,12 +55,12 @@
 			android:name=".authenticator.AuthenticatorActivity"
 			android:configChanges="orientation"
 			android:excludeFromRecents="true"
-			android:label="@string/label"
+			android:label="@string/app_name"
 			android:theme="@android:style/Theme.Dialog">
 		</activity>
 		<activity
 			android:name=".activities.TestFacebookApi"
-			android:label="@string/label">
+			android:label="@string/app_name">
 		</activity>
 		<activity
 			android:name=".activities.Preferences"
@@ -77,6 +77,13 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
 				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity android:theme="@android:style/Theme.NoDisplay" android:name=".activities.Profile">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.ro.weednet.contactssync.profile" />
 			</intent-filter>
 		</activity>
 		
