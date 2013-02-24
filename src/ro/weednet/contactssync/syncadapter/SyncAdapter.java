@@ -158,6 +158,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		showNotificationMessage(message, message, "Select to test connection or change settings");
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void showNotificationMessage(String tickerText, String title, String desc) {
 		if (!ContactsSync.getInstance().getShowNotifications()) {
 			return;
