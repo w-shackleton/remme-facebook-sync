@@ -42,12 +42,11 @@ public class Profile extends Activity {
 					intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/" + userId));
 					startActivity(intent);
 				} catch(Exception e) {
-					intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.facebook.com/" + userId));
+					intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/profile.php?id=" + userId));
 					startActivity(intent);
 				}
 			}
-		} else {
-			finish();
 		}
+		finish();
 	}
 }
