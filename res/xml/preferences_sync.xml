@@ -27,6 +27,11 @@
 			android:title="@string/prefs_sync_wifi_only_title" />
 		<CheckBoxPreference
 			android:defaultValue="true"
+			android:key="sync_emails"
+			android:summary="@string/prefs_sync_emails_summary"
+			android:title="@string/prefs_sync_emails_title" />
+		<CheckBoxPreference
+			android:defaultValue="true"
 			android:key="sync_statuses"
 			android:summary="@string/prefs_sync_statuses_summary"
 			android:title="@string/prefs_sync_statuses_title" />

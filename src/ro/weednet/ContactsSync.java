@@ -43,8 +43,10 @@ public class ContactsSync extends Application {
 	private boolean mSyncBirthdays;
 	private int mBirthdayFormat;
 	private boolean mSyncStatuses;
+	private boolean mSyncEmails;
 	private boolean mShowNotifications;
 	private int mConnTimeout;
+	private boolean mDisableAds;
 	private static ContactsSync _instance = null;
 	
 	public static ContactsSync getInstance() {
@@ -96,6 +98,9 @@ public class ContactsSync extends Application {
 	public boolean getSyncStatuses() {
 		return mSyncStatuses;
 	}
+	public boolean getSyncEmails() {
+		return mSyncEmails;
+	}
 	public boolean getFullSync() {
 		return mFullSync;
 	}
@@ -104,6 +109,9 @@ public class ContactsSync extends Application {
 	}
 	public int getConnectionTimeout() {
 		return mConnTimeout;
+	}
+	public boolean getDisableAds() {
+		return mDisableAds;
 	}
 	
 	public void setSyncFrequency(int value) {
@@ -142,6 +150,9 @@ public class ContactsSync extends Application {
 	public void setSyncStatuses(boolean value) {
 		mSyncStatuses = value;
 	}
+	public void setSyncEmails(boolean value) {
+		mSyncEmails = value;
+	}
 	public void setShowNotifications(boolean value) {
 		mShowNotifications = value;
 	}
@@ -159,6 +170,9 @@ public class ContactsSync extends Application {
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
 		editor.putBoolean("full_sync", mFullSync);
 		editor.commit();
+	}
+	public void setDisableAds(boolean value) {
+		mDisableAds = value;
 	}
 	
 	public void reloadPreferences() {
@@ -184,6 +198,7 @@ public class ContactsSync extends Application {
 			mBirthdayFormat = Preferences.DEFAULT_BIRTHDAY_FORMAT;
 		}
 		mSyncStatuses = settings.getBoolean("sync_statuses", Preferences.DEFAULT_SYNC_STATUSES);
+		mSyncEmails = settings.getBoolean("sync_emails", Preferences.DEFAULT_SYNC_EMAILS);
 		mFullSync = settings.getBoolean("full_sync", false);
 		mShowNotifications = settings.getBoolean("show_notif", Preferences.DEFAULT_SHOW_NOTIFICATIONS);
 		try {
@@ -191,6 +206,7 @@ public class ContactsSync extends Application {
 		} catch (NumberFormatException e) {
 			mConnTimeout = Preferences.DEFAULT_CONNECTION_TIMEOUT;
 		}
+		mDisableAds = settings.getBoolean("disable_ads", Preferences.DEFAULT_DISABLE_ADS);
 	}
 	
 	public void savePreferences() {
@@ -203,8 +219,10 @@ public class ContactsSync extends Application {
 		editor.putBoolean("sync_birthdays", mSyncBirthdays);
 		editor.putString("birthday_format", Integer.toString(mBirthdayFormat));
 		editor.putBoolean("sync_statuses", mSyncStatuses);
+		editor.putBoolean("sync_emails", mSyncEmails);
 		editor.putBoolean("full_sync", mFullSync);
 		editor.putString("conn_timeout", Integer.toString(mConnTimeout));
+		editor.putBoolean("disable_ads", mDisableAds);
 		editor.commit();
 	}
 	

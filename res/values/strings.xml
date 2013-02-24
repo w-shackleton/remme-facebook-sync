@@ -24,12 +24,15 @@
 	<string name="prefs_sync_wifi_only_summary">Synchronize only when you are connected to a wifi network</string>
 	<string name="prefs_sync_statuses_title">Sync statuses</string>
 	<string name="prefs_sync_statuses_summary">Import your friends\' statuses (only status updates, not comments, links, checkings, etc)</string>
+	<string name="prefs_sync_emails_title">Sync emails</string>
+	<string name="prefs_sync_emails_summary">Import facebook emails</string>
 	<string name="prefs_sync_birthdays_title">Sync birthdays</string>
 	<string name="prefs_sync_birthdays_summary">Add birthdays to your contacts</string>
 	<string name="prefs_sync_birthday_format_title">Birthday format</string>
 	<string name="prefs_sync_birthday_format_summary"></string>
 	<string name="prefs_sync_join_by_id_title">Join by Facebook ID</string>
 	<string name="prefs_sync_join_by_id_summary">Join contacts with different names by using the Facebook ID from Notes field</string>
+	
 	<string name="prefs_cat_troubleshoot_title">Troubleshooting</string>
 	<string name="prefs_troubleshoot_conn_title">Test connection</string>
 	<string name="prefs_troubleshoot_conn_summary">Run tests that check the Facebook API status</string>
@@ -45,6 +48,11 @@
 	<string name="prefs_conn_timeout_summary">Timeout value in seconds for establishing the connection</string>
 	<string name="prefs_contact_bug_title">Report bug</string>
 	<string name="prefs_contact_bug_summary">Send bug report</string>
+	
+	<string name="prefs_cat_other_title">Other settings</string>
+	<string name="prefs_disable_ads_title">Disable ads</string>
+	<string name="prefs_disable_ads_summary"></string>
+		
 	<string name="prefs_cat_about_title">About</string>
 	<string name="prefs_about_title">Copyright &#169; 2012 WeedNET</string>
 	<string name="prefs_about_summary">Danut Chereches</string>

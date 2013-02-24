@@ -222,9 +222,12 @@ public class ContactManager {
 		
 		contactOp
 				.addName(rawContact.getFirstName(), rawContact.getLastName())
-				.addEmail(rawContact.getEmail())
 				.addGroupMembership(groupId)
 				.addAvatar(rawContact.getAvatarUrl());
+		
+		if (ContactsSync.getInstance().getSyncEmails()) {
+			contactOp.addEmail(rawContact.getEmail());
+		}
 		
 		if (ContactsSync.getInstance().getSyncBirthdays()) {
 			contactOp.addBirthday(rawContact.getBirthday());
@@ -285,7 +288,8 @@ public class ContactManager {
 								"5345345", uri);
 					}
 				*/
-				} else if (mimeType.equals(Email.CONTENT_ITEM_TYPE)) {
+				} else if (ContactsSync.getInstance().getSyncEmails()
+				        && mimeType.equals(Email.CONTENT_ITEM_TYPE)) {
 					existingEmail = true;
 					contactOp.updateEmail(rawContact.getEmail(),
 							c.getString(DataQuery.COLUMN_EMAIL_ADDRESS), uri);
@@ -321,7 +325,8 @@ public class ContactManager {
 	//		contactOp.addPhone("34342", Phone.TYPE_WORK);
 	//	}
 		// Add the email address, if present and not updated above
-		if (!existingEmail) {
+		if (ContactsSync.getInstance().getSyncEmails()
+		 && !existingEmail) {
 			contactOp.addEmail(rawContact.getEmail());
 		}
 		// Add the avatar if we didn't update the existing avatar

@@ -71,8 +71,10 @@ public class Preferences extends PreferenceActivity {
 	public final static boolean DEFAULT_SYNC_BIRTHDAYS = false;
 	public final static int DEFAULT_BIRTHDAY_FORMAT = 0;
 	public final static boolean DEFAULT_SYNC_STATUSES = true;
+	public final static boolean DEFAULT_SYNC_EMAILS = true;
 	public final static boolean DEFAULT_SHOW_NOTIFICATIONS = false;
 	public final static int DEFAULT_CONNECTION_TIMEOUT = 60;
+	public final static boolean DEFAULT_DISABLE_ADS = false;
 	private Dialog mAuthDialog;
 	private Account[] mAccounts;
 	
@@ -142,16 +144,19 @@ public class Preferences extends PreferenceActivity {
 		}
 	};
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		//TODO: use current/selected account (not the first one)
-		Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
+		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
+		addPreferencesFromResource(R.xml.preferences_other);
 		addPreferencesFromResource(R.xml.preferences_about);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -186,12 +191,15 @@ public class Preferences extends PreferenceActivity {
 			findPreference("sync_birthdays").setOnPreferenceChangeListener(syncBirthdaysChange);
 			findPreference("birthday_format").setOnPreferenceChangeListener(birthdayFormatChange);
 			findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
+			findPreference("sync_emails").setOnPreferenceChangeListener(syncEmailsChange);
 			findPreference("show_notif").setOnPreferenceChangeListener(showNotificationsChange);
 			findPreference("conn_timeout").setOnPreferenceChangeListener(connectionTimeoutChange);
 			
 			findPreference("faq").setOnPreferenceClickListener(faqClick);
 			findPreference("run_now").setOnPreferenceClickListener(syncNowClick);
 			findPreference("run_now_full").setOnPreferenceClickListener(syncFullNowClick);
+			
+			findPreference("disable_ads").setOnPreferenceChangeListener(disableAdsChange);
 			
 			Intent test_intent = new Intent(this, TestFacebookApi.class);
 			findPreference("test_fb_api").setIntent(test_intent);
@@ -262,7 +270,13 @@ public class Preferences extends PreferenceActivity {
 	
 	@Override
 	public void onBackPressed() {
-		AppBrain.getAds().maybeShowInterstitial(this);
+		ContactsSync app = ContactsSync.getInstance();
+		
+		if (!app.getDisableAds()) {
+			//TODO: change back to maybe
+			AppBrain.getAds().showInterstitial(this);
+		}
+		
 		finish();
 	}
 	
@@ -320,6 +334,7 @@ public class Preferences extends PreferenceActivity {
 					.setTitle("Confirm")
 					.setMessage("This action will trigger a full sync. It will use more bandwidth and remove all manual contact joins. Are you sure you want to do this?")
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							app.setSyncAllContacts(false);
@@ -372,6 +387,7 @@ public class Preferences extends PreferenceActivity {
 					.setTitle("Confirm")
 					.setMessage("This feature only works on some devices.\nIt may even cause crashes or freezes on few devices.\nAre you sure you want to continue?")
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							app.setSyncBirthdays(true);
@@ -409,6 +425,18 @@ public class Preferences extends PreferenceActivity {
 			try {
 				ContactsSync app = ContactsSync.getInstance();
 				app.setSyncStatuses((Boolean) newValue);
+				return true;
+			} catch (Exception e) {
+				Log.d("contactsync-preferences", "error: " + e.getMessage());
+				return false;
+			}
+		}
+	};
+	Preference.OnPreferenceChangeListener syncEmailsChange = new Preference.OnPreferenceChangeListener() {
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			try {
+				ContactsSync app = ContactsSync.getInstance();
+				app.setSyncEmails((Boolean) newValue);
 				return true;
 			} catch (Exception e) {
 				Log.d("contactsync-preferences", "error: " + e.getMessage());
@@ -526,6 +554,18 @@ public class Preferences extends PreferenceActivity {
 			faqDialog.show();
 			
 			return false;
+		}
+	};
+	Preference.OnPreferenceChangeListener disableAdsChange = new Preference.OnPreferenceChangeListener() {
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			try {
+				ContactsSync app = ContactsSync.getInstance();
+				app.setDisableAds((Boolean) newValue);
+				return true;
+			} catch (Exception e) {
+				Log.d("contactsync-preferences", "error: " + e.getMessage());
+				return false;
+			}
 		}
 	};
 }
