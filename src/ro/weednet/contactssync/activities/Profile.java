@@ -34,7 +34,6 @@ public class Profile extends Activity {
 		
 		Intent intent = getIntent();
 		if (intent.getData() != null) {
-			@SuppressWarnings("deprecation")
 			Cursor cursor = managedQuery(intent.getData(), null, null, null, null);
 			if (cursor.moveToNext()) {
 				String userId = cursor.getString(cursor.getColumnIndex("DATA1"));

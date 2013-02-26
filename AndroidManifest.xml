@@ -7,7 +7,7 @@
 	
 	<uses-sdk
 		android:minSdkVersion="8"
-		android:targetSdkVersion="17" />
+		android:maxSdkVersion="13" />
 	
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -92,7 +92,7 @@
 		
 		<!-- AppBrain SDK -->
 		<activity
-			android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode"
 			android:name="com.appbrain.AppBrainActivity" />
 		<service android:name="com.appbrain.AppBrainService" />
 		<receiver

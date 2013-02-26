@@ -144,7 +144,6 @@ public class Preferences extends PreferenceActivity {
 		}
 	};
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -156,7 +155,6 @@ public class Preferences extends PreferenceActivity {
 		addPreferencesFromResource(R.xml.preferences_about);
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -333,7 +331,6 @@ public class Preferences extends PreferenceActivity {
 					.setTitle("Confirm")
 					.setMessage("This action will trigger a full sync. It will use more bandwidth and remove all manual contact joins. Are you sure you want to do this?")
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							app.setSyncAllContacts(false);
@@ -386,7 +383,6 @@ public class Preferences extends PreferenceActivity {
 					.setTitle("Confirm")
 					.setMessage("This feature only works on some devices.\nIt may even cause crashes or freezes on few devices.\nAre you sure you want to continue?")
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							app.setSyncBirthdays(true);
