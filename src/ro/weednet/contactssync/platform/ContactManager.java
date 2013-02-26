@@ -363,7 +363,7 @@ public class ContactManager {
 			Log.e("DownloadPhoto", "updating row");
 			final long id = c.getLong(DataQuery.COLUMN_ID);
 			final Uri uri = ContentUris.withAppendedId(Data.CONTENT_URI, id);
-			contactOp.updateAvatar(photo.getPhotoUrl(), photo.getPhotoUrl(), uri);
+			contactOp.updateAvatar(c.getString(DataQuery.COLUMN_DATA1), photo.getPhotoUrl(), uri);
 			c.close();
 		} else {
 			Log.e("DownloadPhoto", "creating row, count: " + c.getCount());
