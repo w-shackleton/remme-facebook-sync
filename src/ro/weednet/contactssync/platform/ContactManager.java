@@ -51,6 +51,7 @@ import java.util.List;
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
+import ro.weednet.contactssync.client.ContactPhoto;
 import ro.weednet.contactssync.client.RawContact;
 
 public class ContactManager {
@@ -302,9 +303,10 @@ public class ContactManager {
 					}
 				} else if (mimeType.equals(Photo.CONTENT_ITEM_TYPE)) {
 					existingAvatar = true;
-					contactOp.updateAvatar(uri,
-							c.getString(DataQuery.COLUMN_DATA1),
-							rawContact.getAvatarUrl());
+					//not needed any more
+				//	contactOp.updateAvatar(uri,
+				//			c.getString(DataQuery.COLUMN_DATA1),
+				//			rawContact.getAvatarUrl());
 				}
 			} // while
 		} finally {
@@ -348,6 +350,27 @@ public class ContactManager {
 			contactOp.addProfileAction(serverId);
 		}
 	}
+	
+	
+	public static void updateContactPhotoHd(Context context, ContentResolver resolver,
+			long rawContactId, ContactPhoto photo, BatchOperation batchOperation) {
+		final Cursor c = resolver.query(DataQuery.CONTENT_URI, DataQuery.PROJECTION,
+			Data.RAW_CONTACT_ID + "=? AND " + DataQuery.COLUMN_MIMETYPE + "=?",
+			new String[] { String.valueOf(rawContactId), Photo.CONTENT_ITEM_TYPE}, null);
+		final ContactOperations contactOp = ContactOperations.updateExistingContact(context, rawContactId, true, batchOperation);
+		
+		if ((c != null) && c.moveToFirst()) {
+			final long id = c.getLong(DataQuery.COLUMN_ID);
+			final Uri uri = ContentUris.withAppendedId(Data.CONTENT_URI, id);
+			contactOp.updateAvatar(c.getString(DataQuery.COLUMN_DATA1), photo.getPhotoUrl(), uri);
+			c.close();
+		} else {
+			contactOp.addAvatar(photo.getPhotoUrl());
+		}
+		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
+		contactOp.updateSyncTimestamp(System.currentTimeMillis(), photo.getTimestamp(), uri);
+	}
+
 	
 	public static void addAggregateException(Context context,
 			RawContact rawContact, BatchOperation batchOperation) {
@@ -575,7 +598,8 @@ public class ContactManager {
 		public static final int COLUMN_GIVEN_NAME = COLUMN_DATA1;
 		public static final int COLUMN_FAMILY_NAME = COLUMN_DATA2;
 		public static final int COLUMN_AVATAR_IMAGE = COLUMN_DATA15;
-		public static final int COLUMN_SYNC_DIRTY = COLUMN_SYNC1;
+		public static final int COLUMN_SYNC_TIMESTAMP = COLUMN_SYNC1;
+		public static final int COLUMN_SYNC_PHOTO_TIMESTAMP = COLUMN_SYNC1;
 		
 		public static final String SELECTION = Data.RAW_CONTACT_ID + "=?";
 	}

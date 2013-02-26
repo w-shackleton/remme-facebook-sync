@@ -155,6 +155,7 @@ public class ContactOperations {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {
 				mValues.clear();
+				mValues.put(Photo.DATA1, avatarUrl);
 				mValues.put(Photo.PHOTO, avatarBuffer);
 				mValues.put(Photo.MIMETYPE, Photo.CONTENT_ITEM_TYPE);
 				addInsertOp();
@@ -226,6 +227,14 @@ public class ContactOperations {
 		return this;
 	}
 	
+	public ContactOperations updateSyncTimestamp(long checkTimestamp, long photoTimestamp, Uri uri) {
+		mValues.clear();
+		mValues.put(RawContacts.SYNC1, checkTimestamp);
+		mValues.put(RawContacts.SYNC2, photoTimestamp);
+		addUpdateOp(uri);
+		return this;
+	}
+	
 	public ContactOperations updatePhone(String existingNumber, String phone, Uri uri) {
 		if (!TextUtils.equals(phone, existingNumber)) {
 			mValues.clear();
@@ -235,7 +244,7 @@ public class ContactOperations {
 		return this;
 	}
 	
-	public ContactOperations updateAvatar(Uri uri, String existingAvatarUrl, String avatarUrl) {
+	public ContactOperations updateAvatar(String existingAvatarUrl, String avatarUrl, Uri uri) {
 		if (avatarUrl != null && !TextUtils.equals(existingAvatarUrl, avatarUrl)) {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {

@@ -227,10 +227,9 @@ final public class NetworkUtilities {
 				JSONObject contact;
 				for (int i = 0; i < serverContacts.length(); i++) {
 					contact = serverContacts.getJSONObject(i);
+					contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
 					if (album_picture && serverImages.containsKey(contact.getString("uid"))) {
-						contact.put("picture", serverImages.get(contact.getString("uid")).getString("src_big"));
-					} else {
-						contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
+						contact.put("picture_hd", serverImages.get(contact.getString("uid")).getString("src_big"));
 					}
 					if (contact.has("birthday_date") && contact.getString("birthday_date") != null
 					 && app.getSyncBirthdays() && app.getBirthdayFormat() != RawContact.BIRTHDAY_FORMATS.DEFAULT) {
@@ -270,6 +269,40 @@ final public class NetworkUtilities {
 		}
 		
 		return serverList;
+	}
+	
+	
+	public ContactPhoto getContactPhotoHD(long rawContactId, String uid)
+			throws IOException, AuthenticationException, JSONException {
+		
+		Bundle params = new Bundle();
+		ContactsSync app = ContactsSync.getInstance();
+		String query = "SELECT owner, src_big, modified FROM photo WHERE pid IN (SELECT cover_pid FROM album WHERE owner = '" + uid + "' AND type = 'profile')";
+		params.putString("method", "fql.query");
+		params.putString("query", query);
+		params.putInt("timeout", app.getConnectionTimeout() * 1000);
+		Request request = Request.newRestRequest(mSession, "fql.query", params, HttpMethod.GET);
+		Response response = request.executeAndWait();
+		
+		if (response == null) {
+			throw new IOException();
+		}
+		if (response.getGraphObjectList() == null) {
+			if (response.getError() != null) {
+				if (response.getError().getErrorCode() == 190) {
+					throw new AuthenticationException();
+				} else {
+					throw new ParseException(response.getError().getErrorMessage());
+				}
+			} else {
+				throw new ParseException();
+			}
+		}
+		
+		Log.e("asdasdasdasdasdas------------", response.getRequest().toString());
+		JSONObject image = response.getGraphObjectList().getInnerJSONArray().getJSONObject(0);
+		
+		return new ContactPhoto(rawContactId, uid, image.getString("src_big"), image.getLong("modified"));
 	}
 	
 	/**
