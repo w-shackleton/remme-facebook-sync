@@ -39,6 +39,7 @@ import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class ContactOperations {
 	private final ContentValues mValues;
@@ -154,11 +155,14 @@ public class ContactOperations {
 		if (avatarUrl != null) {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {
+				Log.e("DownloadPhoto", "image downloaded; addinf");
 				mValues.clear();
 				mValues.put(Photo.DATA1, avatarUrl);
 				mValues.put(Photo.PHOTO, avatarBuffer);
 				mValues.put(Photo.MIMETYPE, Photo.CONTENT_ITEM_TYPE);
 				addInsertOp();
+			} else {
+				Log.e("DownloadPhoto", "failed, buffer null");
 			}
 		}
 		return this;
@@ -248,12 +252,17 @@ public class ContactOperations {
 		if (avatarUrl != null && !TextUtils.equals(existingAvatarUrl, avatarUrl)) {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {
+				Log.e("DownloadPhoto", "image downloaded; updating");
 				mValues.clear();
 				mValues.put(Photo.DATA1, avatarUrl);
 				mValues.put(Photo.PHOTO, avatarBuffer);
 				mValues.put(Photo.MIMETYPE, Photo.CONTENT_ITEM_TYPE);
 				addUpdateOp(uri);
+			} else {
+				Log.e("DownloadPhoto", "failed, buffer null");
 			}
+		} else {
+			Log.e("DownloadPhoto", "not doing it");
 		}
 		return this;
 	}

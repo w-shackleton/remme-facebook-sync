@@ -299,7 +299,7 @@ final public class NetworkUtilities {
 			}
 		}
 		
-		Log.e("asdasdasdasdasdas------------", response.getRequest().toString());
+		Log.e("FacebookGetPhoto", "response: " + response.getGraphObjectList().toString());
 		JSONObject image = response.getGraphObjectList().getInnerJSONArray().getJSONObject(0);
 		
 		return new ContactPhoto(rawContactId, uid, image.getString("src_big"), image.getLong("modified"));
@@ -345,7 +345,7 @@ final public class NetworkUtilities {
 							targetWidth  = 256;
 							targetHeight = 256;
 					}
-				//	Log.v("pic_size", "w:"+targetWidth + ", h:"+targetHeight);
+					Log.v("pic_size", "w:"+targetWidth + ", h:"+targetHeight);
 					
 					int cropWidth = Math.min(originalImage.getWidth(), originalImage.getHeight());
 					int cropHeight = cropWidth;
@@ -361,6 +361,7 @@ final public class NetworkUtilities {
 					croppedImage.recycle();
 					resizedBitmap.recycle();
 				} else {
+					Log.v("pic_size", "original: w:"+originalImage.getWidth() + ", h:"+originalImage.getHeight());
 					convertStream = new ByteArrayOutputStream(originalImage.getWidth() * originalImage.getHeight() * 4);
 					originalImage.compress(Bitmap.CompressFormat.JPEG, 95, convertStream);
 				}

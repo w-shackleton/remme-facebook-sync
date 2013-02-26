@@ -62,7 +62,6 @@ public class NotifierService extends IntentService {
 			long rawContactId = ContentUris.parseId(uri);
 			String uid = c.getString(c.getColumnIndex(RawContacts.SOURCE_ID));
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
-			long photoTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC2));
 			
 			if (System.currentTimeMillis() - checkTimestamp < 60000) {
 				Log.i(TAG, "contact up to date. quiting");
@@ -94,15 +93,10 @@ public class NotifierService extends IntentService {
 				String authtoken = am.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
 				NetworkUtilities nu = new NetworkUtilities(authtoken, this);
 				ContactPhoto photo = nu.getContactPhotoHD(rawContactId, uid);
-				
-				if (photoTimestamp != photo.getTimestamp()) {
-					ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
-					batchOperation.execute();
-				} else {
-					Log.i(TAG, "photo up to date. quiting");
-					return;
-				}
+				ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
+				batchOperation.execute();
 			} catch (Exception e) {
+				Log.i(TAG, "photo update error: " + e.getMessage());
 				e.printStackTrace();
 			}
 			

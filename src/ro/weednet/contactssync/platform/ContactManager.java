@@ -355,16 +355,18 @@ public class ContactManager {
 	public static void updateContactPhotoHd(Context context, ContentResolver resolver,
 			long rawContactId, ContactPhoto photo, BatchOperation batchOperation) {
 		final Cursor c = resolver.query(DataQuery.CONTENT_URI, DataQuery.PROJECTION,
-			Data.RAW_CONTACT_ID + "=? AND " + DataQuery.COLUMN_MIMETYPE + "=?",
+			Data.RAW_CONTACT_ID + "=? AND " + Data.MIMETYPE + "=?",
 			new String[] { String.valueOf(rawContactId), Photo.CONTENT_ITEM_TYPE}, null);
 		final ContactOperations contactOp = ContactOperations.updateExistingContact(context, rawContactId, true, batchOperation);
 		
 		if ((c != null) && c.moveToFirst()) {
+			Log.e("DownloadPhoto", "updating row");
 			final long id = c.getLong(DataQuery.COLUMN_ID);
 			final Uri uri = ContentUris.withAppendedId(Data.CONTENT_URI, id);
-			contactOp.updateAvatar(c.getString(DataQuery.COLUMN_DATA1), photo.getPhotoUrl(), uri);
+			contactOp.updateAvatar(photo.getPhotoUrl(), photo.getPhotoUrl(), uri);
 			c.close();
 		} else {
+			Log.e("DownloadPhoto", "creating row, count: " + c.getCount());
 			contactOp.addAvatar(photo.getPhotoUrl());
 		}
 		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
