@@ -272,12 +272,12 @@ final public class NetworkUtilities {
 	}
 	
 	
-	public ContactPhoto getContactPhotoHD(long rawContactId, String uid)
+	public ContactPhoto getContactPhotoHD(RawContact contact)
 			throws IOException, AuthenticationException, JSONException {
 		
 		Bundle params = new Bundle();
 		ContactsSync app = ContactsSync.getInstance();
-		String query = "SELECT owner, src_big, modified FROM photo WHERE pid IN (SELECT cover_pid FROM album WHERE owner = '" + uid + "' AND type = 'profile')";
+		String query = "SELECT owner, src_big, modified FROM photo WHERE pid IN (SELECT cover_pid FROM album WHERE owner = '" + contact.getUid() + "' AND type = 'profile')";
 		params.putString("method", "fql.query");
 		params.putString("query", query);
 		params.putInt("timeout", app.getConnectionTimeout() * 1000);
@@ -302,7 +302,7 @@ final public class NetworkUtilities {
 		Log.e("FacebookGetPhoto", "response: " + response.getGraphObjectList().toString());
 		JSONObject image = response.getGraphObjectList().getInnerJSONArray().getJSONObject(0);
 		
-		return new ContactPhoto(rawContactId, uid, image.getString("src_big"), image.getLong("modified"));
+		return new ContactPhoto(contact, image.getString("src_big"), image.getLong("modified"));
 	}
 	
 	/**

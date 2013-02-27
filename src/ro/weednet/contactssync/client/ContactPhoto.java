@@ -41,9 +41,9 @@ final public class ContactPhoto {
 		return mTimestamp * 1000;
 	}
 	
-	public ContactPhoto(long rawContactId, String uid, String photoUrl, long timestamp) {
-		mRawContactId = rawContactId;
-		mUid = uid;
+	public ContactPhoto(RawContact contact, String photoUrl, long timestamp) {
+		mRawContactId = contact.getRawContactId();
+		mUid = contact.getUid();
 		mPhotoUrl = photoUrl;
 		mTimestamp = timestamp;
 	}

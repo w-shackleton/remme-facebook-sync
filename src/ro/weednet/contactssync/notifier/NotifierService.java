@@ -25,6 +25,7 @@ package ro.weednet.contactssync.notifier;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.client.ContactPhoto;
 import ro.weednet.contactssync.client.NetworkUtilities;
+import ro.weednet.contactssync.client.RawContact;
 import ro.weednet.contactssync.platform.BatchOperation;
 import ro.weednet.contactssync.platform.ContactManager;
 import android.accounts.Account;
@@ -61,6 +62,7 @@ public class NotifierService extends IntentService {
 			String accountName = c.getString(c.getColumnIndex(RawContacts.ACCOUNT_NAME));
 			long rawContactId = ContentUris.parseId(uri);
 			String uid = c.getString(c.getColumnIndex(RawContacts.SOURCE_ID));
+			RawContact rawContact = RawContact.create(rawContactId, uid);
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
 			
 			if (System.currentTimeMillis() - checkTimestamp < 60000) {
@@ -92,7 +94,7 @@ public class NotifierService extends IntentService {
 			try {
 				String authtoken = am.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
 				NetworkUtilities nu = new NetworkUtilities(authtoken, this);
-				ContactPhoto photo = nu.getContactPhotoHD(rawContactId, uid);
+				ContactPhoto photo = nu.getContactPhotoHD(rawContact);
 				ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
 				batchOperation.execute();
 			} catch (Exception e) {
