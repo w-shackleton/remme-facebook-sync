@@ -144,12 +144,18 @@ public class ContactManager {
 		while (iterator.hasNext()) {
 			RawContact contact = iterator.next();
 			try {
+				Log.i(TAG, "checking user: " + contact.getUid());
 				ContactPhoto photo = nu.getContactPhotoHD(contact);
 				ContactManager.updateContactPhotoHd(context, resolver, contact.getRawContactId(), photo, batchOperation);
 			} catch (JSONException e) {
-				
+				Log.e(TAG, e.toString());
+			}
+			if (batchOperation.size() >= 10) {
+				batchOperation.execute();
 			}
 		}
+		
+		batchOperation.execute();
 	}
 	
 	public static List<RawContact> getLocalContacts(Context context, Uri uri) {
@@ -444,10 +450,10 @@ public class ContactManager {
 			contactOp.updateAvatar(c.getString(DataQuery.COLUMN_DATA1), photo.getPhotoUrl(), uri);
 			c.close();
 		} else {
-			Log.e("DownloadPhoto", "creating row, count: " + c.getCount());
+			Log.i(TAG, "creating row, count: " + c.getCount());
 			contactOp.addAvatar(photo.getPhotoUrl());
 		}
-		Log.e("DownloadPhoto", "updating row");
+		Log.i(TAG, "updating row");
 		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
 		contactOp.updateSyncTimestamp(System.currentTimeMillis(), photo.getTimestamp(), uri);
 	}
