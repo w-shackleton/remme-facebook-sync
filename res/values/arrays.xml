@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string-array name="prefs_sync_type_entries">
+		<item>Soft [fastest]\n  sync details only on demand</item>
+		<item>Medium [recommended]\n  always sync details for starred contacts</item>
+		<item>Hard [only for &lt; 100 contacts]\n  keep all contacts in sync</item>
+	</string-array>
+	<string-array name="prefs_sync_type_entry_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
 	<string-array name="prefs_sync_freq_entries">
 		<item>Disabled</item>
 		<item>1 Hour</item>

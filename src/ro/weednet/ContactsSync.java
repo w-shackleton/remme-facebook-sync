@@ -33,7 +33,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class ContactsSync extends Application {
+	public static enum SyncType {
+		SOFT, MEDIUM, HARD
+	}
+	
 	private final static String _namespace = "ro.weednet.contactssync_preferences";
+	private SyncType mSyncType;
 	private int mSyncFreq;
 	private int mPicSize;
 	private boolean mSyncAll;
@@ -74,6 +79,9 @@ public class ContactsSync extends Application {
 		AppBrain.initApp(this);
 	}
 	
+	public SyncType getSyncType() {
+		return mSyncType;
+	}
 	public int getSyncFrequency() {
 		return mSyncFreq;
 	}
@@ -114,6 +122,11 @@ public class ContactsSync extends Application {
 		return mDisableAds;
 	}
 	
+	public void setSyncType(int value) {
+		try {
+			mSyncType = SyncType.values()[value];
+		} catch (Exception e) { }
+	}
 	public void setSyncFrequency(int value) {
 		if (value >= 0 || value <= 720) {
 			mSyncFreq = value;
@@ -179,6 +192,12 @@ public class ContactsSync extends Application {
 		SharedPreferences settings = getSharedPreferences();
 		
 		try {
+			int type = Integer.parseInt(settings.getString("sync_type", Integer.toString(Preferences.DEFAULT_SYNC_TYPE.ordinal())));
+			mSyncType = SyncType.values()[type];
+		} catch (Exception e) {
+			mSyncType = Preferences.DEFAULT_SYNC_TYPE;
+		}
+		try {
 			mSyncFreq = Integer.parseInt(settings.getString("sync_freq", Integer.toString(Preferences.DEFAULT_SYNC_FREQUENCY)));//hours
 		} catch (NumberFormatException e) {
 			mSyncFreq = Preferences.DEFAULT_SYNC_FREQUENCY;
@@ -211,6 +230,8 @@ public class ContactsSync extends Application {
 	
 	public void savePreferences() {
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		
+		editor.putInt("sync_type", mSyncType.ordinal());
 		editor.putString("sync_freq", Integer.toString(mSyncFreq));
 		editor.putString("pic_size", Integer.toString(mPicSize));
 		editor.putBoolean("sync_all", mSyncAll);
@@ -223,6 +244,7 @@ public class ContactsSync extends Application {
 		editor.putBoolean("full_sync", mFullSync);
 		editor.putString("conn_timeout", Integer.toString(mConnTimeout));
 		editor.putBoolean("disable_ads", mDisableAds);
+		
 		editor.commit();
 	}
 	

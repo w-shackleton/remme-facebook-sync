@@ -135,7 +135,7 @@ public class ContactManager {
 		return syncList;
 	}
 	
-	public static synchronized void updateStarredContacts(Context context, List<RawContact> contacts,
+	public static synchronized void updateContactDetails(Context context, List<RawContact> contacts,
 			NetworkUtilities nu) throws AuthenticationException, IOException {
 		final ContentResolver resolver = context.getContentResolver();
 		final BatchOperation batchOperation = new BatchOperation(context, resolver);
@@ -324,6 +324,7 @@ public class ContactManager {
 			RawContact rawContact, boolean updateAvatar, boolean inSync,
 			long rawContactId, BatchOperation batchOperation) {
 		
+		ContactsSync app = ContactsSync.getInstance();
 		boolean existingBirthday = false;
 		boolean existingAvatar = false;
 		boolean existingEmail = false;
@@ -367,12 +368,12 @@ public class ContactManager {
 								"5345345", uri);
 					}
 				*/
-				} else if (ContactsSync.getInstance().getSyncEmails()
+				} else if (app.getSyncEmails()
 				        && mimeType.equals(Email.CONTENT_ITEM_TYPE)) {
 					existingEmail = true;
 					contactOp.updateEmail(rawContact.getEmail(),
 							c.getString(DataQuery.COLUMN_EMAIL_ADDRESS), uri);
-				} else if (ContactsSync.getInstance().getSyncBirthdays()
+				} else if (app.getSyncBirthdays()
 				        && mimeType.equals(Event.CONTENT_ITEM_TYPE)) {
 					if (c.getInt(DataQuery.COLUMN_BIRTHDAY_TYPE) == Event.TYPE_BIRTHDAY) {
 						existingBirthday = true;
@@ -405,16 +406,17 @@ public class ContactManager {
 	//		contactOp.addPhone("34342", Phone.TYPE_WORK);
 	//	}
 		// Add the email address, if present and not updated above
-		if (ContactsSync.getInstance().getSyncEmails()
+		if (app.getSyncEmails()
 		 && !existingEmail) {
 			contactOp.addEmail(rawContact.getEmail());
 		}
 		// Add the avatar if we didn't update the existing avatar
-		if (!existingAvatar) {
+		if (app.getSyncType() != ContactsSync.SyncType.HARD
+		 && !existingAvatar) {
 			contactOp.addAvatar(rawContact.getAvatarUrl());
 		}
 		// Add the birthday, if present and not updated above
-		if (ContactsSync.getInstance().getSyncBirthdays()
+		if (app.getSyncBirthdays()
 		 && !existingBirthday) {
 			contactOp.addBirthday(rawContact.getBirthday());
 		}

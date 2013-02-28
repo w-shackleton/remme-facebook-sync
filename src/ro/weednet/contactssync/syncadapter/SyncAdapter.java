@@ -111,12 +111,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				ContactManager.addJoins(mContext, rawContacts);
 			}
 			
-			if (app.getSyncStatuses()) {
-				ContactManager.updateStatusMessages(mContext, rawContacts);
-			}
+		//	if (app.getSyncStatuses()) {
+		//		ContactManager.updateStatusMessages(mContext, rawContacts);
+		//	}
 			
-			List<RawContact> starredContacts = ContactManager.getStarredContacts(mContext, rawContactsUri);
-			ContactManager.updateStarredContacts(mContext, starredContacts, nu);
+			if (app.getSyncType() == ContactsSync.SyncType.HARD) {
+				List<RawContact> starredContacts = ContactManager.getStarredContacts(mContext, rawContactsUri);
+				ContactManager.updateContactDetails(mContext, starredContacts, nu);
+			} else if (app.getSyncType() == ContactsSync.SyncType.MEDIUM) {
+				ContactManager.updateContactDetails(mContext, rawContacts, nu);
+			}
 			
 			NotificationManager mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 			mNotificationManager.cancelAll();

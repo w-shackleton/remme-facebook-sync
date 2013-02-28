@@ -63,6 +63,7 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 
 public class Preferences extends PreferenceActivity {
+	public final static ContactsSync.SyncType DEFAULT_SYNC_TYPE = ContactsSync.SyncType.MEDIUM;
 	public final static int DEFAULT_SYNC_FREQUENCY = 24;//hours
 	public final static int DEFAULT_PICTURE_SIZE = RawContact.IMAGE_SIZES.SQUARE;
 	public final static boolean DEFAULT_SYNC_ALL = true;
@@ -183,6 +184,7 @@ public class Preferences extends PreferenceActivity {
 				}
 			}
 			
+			findPreference("sync_type").setOnPreferenceChangeListener(syncTypeChange);
 			findPreference("sync_freq").setOnPreferenceChangeListener(syncFreqChange);
 			findPreference("pic_size").setOnPreferenceChangeListener(picSizeChange);
 			findPreference("sync_all").setOnPreferenceChangeListener(syncAllChange);
@@ -279,6 +281,18 @@ public class Preferences extends PreferenceActivity {
 		finish();
 	}
 	
+	Preference.OnPreferenceChangeListener syncTypeChange = new Preference.OnPreferenceChangeListener() {
+		public boolean onPreferenceChange(Preference preference, Object newValue) {
+			try {
+				ContactsSync app = ContactsSync.getInstance();
+				app.setSyncType(Integer.parseInt((String) newValue));
+				return true;
+			} catch (Exception e) {
+				Log.d("contactsync-preferences", "error: " + e.getMessage());
+				return false;
+			}
+		}
+	};
 	Preference.OnPreferenceChangeListener syncFreqChange = new Preference.OnPreferenceChangeListener() {
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			try {

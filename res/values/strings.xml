@@ -13,6 +13,8 @@
 	<string name="exit">Exit</string>
 	
 	<string name="prefs_cat_sync_title">Sync settings</string>
+	<string name="prefs_sync_type_title">Sync type</string>
+	<string name="prefs_sync_type_summary">Control how contact details are synced. (photos, statuses)</string>
 	<string name="prefs_sync_freq_title">Sync frequency</string>
 	<string name="prefs_sync_freq_summary">The frequency at which the contacts synchronize</string>
 	<string name="prefs_sync_pic_size_title">Picture size</string>
