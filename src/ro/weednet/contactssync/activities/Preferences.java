@@ -66,7 +66,7 @@ public class Preferences extends PreferenceActivity {
 	public final static ContactsSync.SyncType DEFAULT_SYNC_TYPE = ContactsSync.SyncType.MEDIUM;
 	public final static int DEFAULT_SYNC_FREQUENCY = 24;//hours
 	public final static int DEFAULT_PICTURE_SIZE = RawContact.IMAGE_SIZES.SQUARE;
-	public final static boolean DEFAULT_SYNC_ALL = true;
+	public final static boolean DEFAULT_SYNC_ALL = false;
 	public final static boolean DEFAULT_SYNC_WIFI_ONLY = false;
 	public final static boolean DEFAULT_JOIN_BY_ID = false;
 	public final static boolean DEFAULT_SYNC_BIRTHDAYS = false;
