@@ -388,10 +388,10 @@ public class ContactManager {
 					}
 				} else if (mimeType.equals(Photo.CONTENT_ITEM_TYPE)) {
 					existingAvatar = true;
-					//not needed any more
-				//	contactOp.updateAvatar(uri,
-				//			c.getString(DataQuery.COLUMN_DATA1),
-				//			rawContact.getAvatarUrl());
+					if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
+						contactOp.updateAvatar(c.getString(DataQuery.COLUMN_DATA1),
+							rawContact.getAvatarUrl(), uri);
+					}
 				}
 			} // while
 		} finally {

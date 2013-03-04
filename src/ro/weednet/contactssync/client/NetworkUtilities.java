@@ -194,6 +194,7 @@ final public class NetworkUtilities {
 				params.putString("method", "fql.query");
 				params.putString("query", query);
 			}
+			
 			params.putInt("timeout", app.getConnectionTimeout() * 1000);
 			Request request = Request.newRestRequest(mSession, "fql.query", params, HttpMethod.GET);
 			Response response = request.executeAndWait();
@@ -234,7 +235,7 @@ final public class NetworkUtilities {
 					contact = serverContacts.getJSONObject(i);
 					contact.put("picture", !contact.isNull(pic_size) ? contact.getString(pic_size) : null);
 					if (album_picture && serverImages.containsKey(contact.getString("uid"))) {
-						contact.put("picture_hd", serverImages.get(contact.getString("uid")).getString("src_big"));
+						contact.put("picture", serverImages.get(contact.getString("uid")).getString("src_big"));
 					}
 					if (contact.has("birthday_date") && contact.getString("birthday_date") != null
 					 && app.getSyncBirthdays() && app.getBirthdayFormat() != RawContact.BIRTHDAY_FORMATS.DEFAULT) {
