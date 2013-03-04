@@ -142,28 +142,33 @@ final public class NetworkUtilities {
 		String pic_size = null;
 		boolean album_picture = false;
 		
-		switch (pictureSize) {
-			case RawContact.IMAGE_SIZES.SMALL_SQUARE:
-				pic_size = "pic_square";
-				break;
-			case RawContact.IMAGE_SIZES.SMALL:
-				pic_size = "pic_small";
-				break;
-			case RawContact.IMAGE_SIZES.NORMAL:
-				pic_size = "pic";
-				break;
-			case RawContact.IMAGE_SIZES.SQUARE:
-			case RawContact.IMAGE_SIZES.BIG_SQUARE:
-			case RawContact.IMAGE_SIZES.HUGE_SQUARE:
-				album_picture = true;
-			case RawContact.IMAGE_SIZES.BIG:
-				pic_size = "pic_big";
-				break;
+		if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
+			switch (pictureSize) {
+				case RawContact.IMAGE_SIZES.SMALL_SQUARE:
+					pic_size = "pic_square";
+					break;
+				case RawContact.IMAGE_SIZES.SMALL:
+					pic_size = "pic_small";
+					break;
+				case RawContact.IMAGE_SIZES.NORMAL:
+					pic_size = "pic";
+					break;
+				case RawContact.IMAGE_SIZES.SQUARE:
+				case RawContact.IMAGE_SIZES.BIG_SQUARE:
+				case RawContact.IMAGE_SIZES.HUGE_SQUARE:
+					album_picture = true;
+				case RawContact.IMAGE_SIZES.BIG:
+					pic_size = "pic_big";
+					break;
+			}
+		} else {
+			pic_size = "pic_square";
+			album_picture = false;
 		}
 		
 		String fields = "uid, username, first_name, last_name, " + pic_size;
 		
-		if (app.getSyncStatuses()) {
+		if (app.getSyncStatuses() && app.getSyncType() == ContactsSync.SyncType.LEGACY) {
 			fields += ", status";
 		}
 		if (app.getSyncBirthdays()) {
@@ -271,7 +276,6 @@ final public class NetworkUtilities {
 		return serverList;
 	}
 	
-	
 	public ContactPhoto getContactPhotoHD(RawContact contact)
 			throws IOException, AuthenticationException, JSONException {
 		
@@ -319,6 +323,7 @@ final public class NetworkUtilities {
 		}
 		
 		try {
+			ContactsSync app = ContactsSync.getInstance();
 			URL url = new URL(avatarUrl);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.connect();
@@ -327,11 +332,11 @@ final public class NetworkUtilities {
 				Bitmap originalImage = BitmapFactory.decodeStream(connection.getInputStream(), null, options);
 				ByteArrayOutputStream convertStream;
 				
-				if (ContactsSync.getInstance().getPictureSize() == RawContact.IMAGE_SIZES.SQUARE
-				 || ContactsSync.getInstance().getPictureSize() == RawContact.IMAGE_SIZES.BIG_SQUARE
-				 || ContactsSync.getInstance().getPictureSize() == RawContact.IMAGE_SIZES.HUGE_SQUARE) {
+				if (app.getPictureSize() == RawContact.IMAGE_SIZES.SQUARE
+				 || app.getPictureSize() == RawContact.IMAGE_SIZES.BIG_SQUARE
+				 || app.getPictureSize() == RawContact.IMAGE_SIZES.HUGE_SQUARE) {
 					int targetWidth, targetHeight;
-					switch(ContactsSync.getInstance().getPictureSize()) {
+					switch(app.getPictureSize()) {
 						case RawContact.IMAGE_SIZES.HUGE_SQUARE:
 							targetWidth  = 720;
 							targetHeight = 720;
