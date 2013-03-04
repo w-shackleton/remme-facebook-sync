@@ -156,6 +156,8 @@ final public class NetworkUtilities {
 				case RawContact.IMAGE_SIZES.SQUARE:
 				case RawContact.IMAGE_SIZES.BIG_SQUARE:
 				case RawContact.IMAGE_SIZES.HUGE_SQUARE:
+				case RawContact.IMAGE_SIZES.MAX:
+				case RawContact.IMAGE_SIZES.MAX_SQUARE:
 					album_picture = true;
 				case RawContact.IMAGE_SIZES.BIG:
 					pic_size = "pic_big";
@@ -335,21 +337,26 @@ final public class NetworkUtilities {
 				
 				if (app.getPictureSize() == RawContact.IMAGE_SIZES.SQUARE
 				 || app.getPictureSize() == RawContact.IMAGE_SIZES.BIG_SQUARE
-				 || app.getPictureSize() == RawContact.IMAGE_SIZES.HUGE_SQUARE) {
+				 || app.getPictureSize() == RawContact.IMAGE_SIZES.HUGE_SQUARE
+				 || app.getPictureSize() == RawContact.IMAGE_SIZES.MAX_SQUARE) {
 					int targetWidth, targetHeight;
 					switch(app.getPictureSize()) {
+						case RawContact.IMAGE_SIZES.MAX_SQUARE:
+							targetWidth  = app.getMaxPhotoSize();
+							targetHeight = app.getMaxPhotoSize();
+							break;
 						case RawContact.IMAGE_SIZES.HUGE_SQUARE:
-							targetWidth  = 720;
-							targetHeight = 720;
+							targetWidth  = Math.min(720, app.getMaxPhotoSize());
+							targetHeight = Math.min(720, app.getMaxPhotoSize());
 							break;
 						case RawContact.IMAGE_SIZES.BIG_SQUARE:
-							targetWidth  = 512;
-							targetHeight = 512;
+							targetWidth  = Math.min(512, app.getMaxPhotoSize());
+							targetHeight = Math.min(512, app.getMaxPhotoSize());
 							break;
 						case RawContact.IMAGE_SIZES.SQUARE:
 						default:
-							targetWidth  = 256;
-							targetHeight = 256;
+							targetWidth  = Math.min(256, app.getMaxPhotoSize());
+							targetHeight = Math.min(256, app.getMaxPhotoSize());
 					}
 					
 					int cropWidth = Math.min(originalImage.getWidth(), originalImage.getHeight());

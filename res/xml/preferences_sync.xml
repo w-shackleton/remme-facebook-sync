@@ -16,7 +16,7 @@
 			android:summary="@string/prefs_sync_freq_summary"
 			android:title="@string/prefs_sync_freq_title" />
 		<ListPreference
-			android:defaultValue="4"
+			android:defaultValue="8"
 			android:entries="@array/prefs_pic_size_entries"
 			android:entryValues="@array/prefs_pic_size_entry_values"
 			android:key="pic_size"

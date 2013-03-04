@@ -26,6 +26,7 @@ import com.appbrain.AppBrain;
 
 import ro.weednet.contactssync.activities.Preferences;
 import ro.weednet.contactssync.client.RawContact;
+import ro.weednet.contactssync.platform.ContactManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -52,6 +53,7 @@ public class ContactsSync extends Application {
 	private boolean mShowNotifications;
 	private int mConnTimeout;
 	private boolean mDisableAds;
+	private int mMaxPhotoSize;
 	private static ContactsSync _instance = null;
 	
 	public static ContactsSync getInstance() {
@@ -76,6 +78,8 @@ public class ContactsSync extends Application {
 		_instance = this;
 		
 		reloadPreferences();
+		mMaxPhotoSize = ContactManager.getPhotoPickSize(this);
+		
 		AppBrain.initApp(this);
 	}
 	
@@ -121,6 +125,9 @@ public class ContactsSync extends Application {
 	public boolean getDisableAds() {
 		return mDisableAds;
 	}
+	public int getMaxPhotoSize() {
+		return mMaxPhotoSize;
+	}
 	
 	public void setSyncType(int value) {
 		try {
@@ -139,7 +146,9 @@ public class ContactsSync extends Application {
 		 || value == RawContact.IMAGE_SIZES.BIG
 		 || value == RawContact.IMAGE_SIZES.SQUARE
 		 || value == RawContact.IMAGE_SIZES.BIG_SQUARE
-		 || value == RawContact.IMAGE_SIZES.HUGE_SQUARE) {
+		 || value == RawContact.IMAGE_SIZES.HUGE_SQUARE
+		 || value == RawContact.IMAGE_SIZES.MAX
+		 || value == RawContact.IMAGE_SIZES.MAX_SQUARE) {
 			mPicSize = value;
 		}
 	}
