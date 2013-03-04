@@ -111,9 +111,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				ContactManager.addJoins(mContext, rawContacts);
 			}
 			
-		//	if (app.getSyncStatuses()) {
-		//		ContactManager.updateStatusMessages(mContext, rawContacts);
-		//	}
+			if (app.getSyncStatuses()
+			 && app.getSyncType() == ContactsSync.SyncType.LEGACY) {
+				ContactManager.updateStatusMessages(mContext, rawContacts);
+			}
 			
 			if (app.getSyncType() == ContactsSync.SyncType.HARD) {
 				ContactManager.updateContactDetails(mContext, rawContacts, nu);
