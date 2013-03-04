@@ -22,6 +22,7 @@
  */
 package ro.weednet.contactssync.notifier;
 
+import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.client.ContactPhoto;
 import ro.weednet.contactssync.client.NetworkUtilities;
@@ -52,6 +53,10 @@ public class NotifierService extends IntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		if (((ContactsSync) getApplication()).getSyncType() == ContactsSync.SyncType.LEGACY) {
+			return;
+		}
+		
 		Uri uri = intent.getData();
 		final ContentResolver resolver = getContentResolver();
 		final Cursor c = resolver. query(uri, null, null, null, null);
