@@ -277,22 +277,22 @@ final public class NetworkUtilities {
 		return serverList;
 	}
 	
-	public ContactPhoto getContactPhotoHD(RawContact contact)
+	public ContactPhoto getContactPhotoHD(RawContact contact, int width, int height)
 			throws IOException, AuthenticationException, JSONException {
 		
 		Bundle params = new Bundle();
 		ContactsSync app = ContactsSync.getInstance();
-		String query = "SELECT owner, src_big, modified FROM photo WHERE pid IN (SELECT cover_pid FROM album WHERE owner = '" + contact.getUid() + "' AND type = 'profile')";
-		params.putString("method", "fql.query");
-		params.putString("query", query);
+		params.putInt("width", width);
+		params.putInt("height", height);
+		params.putBoolean("redirect", false);
 		params.putInt("timeout", app.getConnectionTimeout() * 1000);
-		Request request = Request.newRestRequest(mSession, "fql.query", params, HttpMethod.GET);
+		Request request = new Request(mSession, contact.getUid() + "/picture", params, HttpMethod.GET);
 		Response response = request.executeAndWait();
 		
 		if (response == null) {
 			throw new IOException();
 		}
-		if (response.getGraphObjectList() == null) {
+		if (response.getGraphObject() == null) {
 			if (response.getError() != null) {
 				if (response.getError().getErrorCode() == 190) {
 					throw new AuthenticationException();
@@ -304,10 +304,10 @@ final public class NetworkUtilities {
 			}
 		}
 		
-		Log.e("FacebookGetPhoto", "response: " + response.getGraphObjectList().toString());
-		JSONObject image = response.getGraphObjectList().getInnerJSONArray().getJSONObject(0);
+		Log.e("FacebookGetPhoto", "response: " + response.getGraphObject().getInnerJSONObject().toString());
+		String image = response.getGraphObject().getInnerJSONObject().getJSONObject("data").getString("url");
 		
-		return new ContactPhoto(contact, image.getString("src_big"), image.getLong("modified"));
+		return new ContactPhoto(contact, image, 0);
 	}
 	
 	/**

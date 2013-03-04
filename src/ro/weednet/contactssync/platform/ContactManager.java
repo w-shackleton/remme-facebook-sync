@@ -39,6 +39,7 @@ import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.DisplayPhoto;
 import android.provider.ContactsContract.Groups;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract.StatusUpdates;
@@ -139,13 +140,15 @@ public class ContactManager {
 			NetworkUtilities nu) throws AuthenticationException, IOException {
 		final ContentResolver resolver = context.getContentResolver();
 		final BatchOperation batchOperation = new BatchOperation(context, resolver);
+		final int pictureSize = getPhotoPickSize(context);
 		
 		Iterator<RawContact> iterator = contacts.iterator();
 		while (iterator.hasNext()) {
 			RawContact contact = iterator.next();
 			try {
 				Log.i(TAG, "checking user: " + contact.getUid());
-				ContactPhoto photo = nu.getContactPhotoHD(contact);
+				//TODO: use selected value
+				ContactPhoto photo = nu.getContactPhotoHD(contact, pictureSize, pictureSize);
 				ContactManager.updateContactPhotoHd(context, resolver, contact.getRawContactId(), photo, batchOperation);
 			} catch (JSONException e) {
 				Log.e(TAG, e.toString());
@@ -474,6 +477,7 @@ public class ContactManager {
 		
 		batchOperation.add(builder.build());
 	}
+	
 	private static void updateContactStatus(Context context,
 			RawContact rawContact, BatchOperation batchOperation) {
 		final ContentValues values = new ContentValues();
@@ -585,6 +589,18 @@ public class ContactManager {
 			}
 		}
 		return profileId;
+	}
+	
+	public static int getPhotoPickSize(Context context) {
+		Cursor c = context.getContentResolver().query(DisplayPhoto.CONTENT_MAX_DIMENSIONS_URI,
+			new String[]{ DisplayPhoto.DISPLAY_MAX_DIM }, null, null, null);
+		
+		try {
+			c.moveToFirst();
+			return c.getInt(0);
+		} finally {
+			c.close();
+		}
 	}
 	
 	final public static class EditorQuery {

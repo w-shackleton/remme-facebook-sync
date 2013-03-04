@@ -99,7 +99,9 @@ public class NotifierService extends IntentService {
 			try {
 				String authtoken = am.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
 				NetworkUtilities nu = new NetworkUtilities(authtoken, this);
-				ContactPhoto photo = nu.getContactPhotoHD(rawContact);
+				int size = ContactManager.getPhotoPickSize(this);
+				//TODO: use selected value
+				ContactPhoto photo = nu.getContactPhotoHD(rawContact, size, size);
 				ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
 				batchOperation.execute();
 			} catch (Exception e) {
