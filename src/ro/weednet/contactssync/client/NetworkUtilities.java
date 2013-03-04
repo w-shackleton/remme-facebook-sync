@@ -162,7 +162,7 @@ final public class NetworkUtilities {
 					break;
 			}
 		} else {
-			pic_size = "pic_square";
+			pic_size = "pic";
 			album_picture = false;
 		}
 		
@@ -350,15 +350,16 @@ final public class NetworkUtilities {
 							targetWidth  = 256;
 							targetHeight = 256;
 					}
-					Log.v("pic_size", "w:"+targetWidth + ", h:"+targetHeight);
 					
 					int cropWidth = Math.min(originalImage.getWidth(), originalImage.getHeight());
 					int cropHeight = cropWidth;
 					int offsetX = Math.round((originalImage.getWidth() - cropWidth) / 2);
 					int offsetY = Math.round((originalImage.getHeight() - cropHeight) / 2);
 					
+					Log.v("pic_size", "w:"+cropWidth + ", h:"+cropHeight);
+					
 					Bitmap croppedImage = Bitmap.createBitmap(originalImage, offsetX, offsetY, cropWidth, cropHeight);
-					Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedImage, targetWidth, targetHeight, false);
+					Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedImage, targetWidth, targetHeight, true);
 					
 					convertStream = new ByteArrayOutputStream(targetWidth * targetHeight * 4);
 					resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 95, convertStream);
