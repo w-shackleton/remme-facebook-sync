@@ -240,7 +240,7 @@ public class ContactsSync extends Application {
 	public void savePreferences() {
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
 		
-		editor.putInt("sync_type", mSyncType.ordinal());
+		editor.putString("sync_type", Integer.toString(mSyncType.ordinal()));
 		editor.putString("sync_freq", Integer.toString(mSyncFreq));
 		editor.putString("pic_size", Integer.toString(mPicSize));
 		editor.putBoolean("sync_all", mSyncAll);
