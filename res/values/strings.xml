@@ -53,7 +53,7 @@
 	<string name="prefs_cat_other_title">Other settings</string>
 	<string name="prefs_disable_ads_title">Disable ads</string>
 	<string name="prefs_disable_ads_summary"></string>
-		
+	
 	<string name="prefs_cat_about_title">About</string>
 	<string name="prefs_about_title">Copyright &#169; 2012 WeedNET</string>
 	<string name="prefs_about_summary">Danut Chereches</string>
