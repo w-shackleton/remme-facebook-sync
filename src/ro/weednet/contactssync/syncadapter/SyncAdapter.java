@@ -24,7 +24,7 @@ package ro.weednet.contactssync.syncadapter;
 
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
+import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.activities.Preferences;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import ro.weednet.contactssync.client.RawContact;

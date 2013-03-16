@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="ro.weednet.contactssync"
+	package="ro.weednet.contactssync.testing"
 	android:versionCode="39"
 	android:versionName="1.2.0">
 	
@@ -29,7 +29,7 @@
 		android:allowBackup="false"
 		android:label="@string/app_name">
 		<service
-			android:name=".authenticator.AuthenticationService"
+			android:name="ro.weednet.contactssync.authenticator.AuthenticationService"
 			android:exported="false">
 			<intent-filter>
 				<action android:name="android.accounts.AccountAuthenticator" />
@@ -39,7 +39,7 @@
 				android:resource="@xml/authenticator" />
 		</service>
 		<service
-			android:name=".syncadapter.SyncService"
+			android:name="ro.weednet.contactssync.syncadapter.SyncService"
 			android:exported="false">
 			<intent-filter>
 				<action android:name="android.content.SyncAdapter" />
@@ -53,18 +53,18 @@
 		</service>
 		<service android:exported="true" android:name=".notifier.NotifierService" />
 		<activity
-			android:name=".authenticator.AuthenticatorActivity"
+			android:name="ro.weednet.contactssync.authenticator.AuthenticatorActivity"
 			android:configChanges="orientation"
 			android:excludeFromRecents="true"
 			android:label="@string/app_name"
 			android:theme="@android:style/Theme.Dialog">
 		</activity>
 		<activity
-			android:name=".activities.TestFacebookApi"
+			android:name="ro.weednet.contactssync.activities.TestFacebookApi"
 			android:label="@string/app_name">
 		</activity>
 		<activity
-			android:name=".activities.Preferences"
+			android:name="ro.weednet.contactssync.activities.Preferences"
 			android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleInstance">
 			<intent-filter>
@@ -80,7 +80,7 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		<activity android:theme="@android:style/Theme.NoDisplay" android:name=".activities.Profile">
+		<activity android:theme="@android:style/Theme.NoDisplay" android:name="ro.weednet.contactssync.activities.Profile">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />

@@ -8,6 +8,6 @@
 		<intent
 			android:action="android.intent.action.VIEW"
 			android:targetClass="ro.weednet.contactssync.activities.Preferences"
-			android:targetPackage="ro.weednet.contactssync" />
+			android:targetPackage="ro.weednet.contactssync.testing" />
 	</PreferenceScreen>
 </PreferenceScreen>

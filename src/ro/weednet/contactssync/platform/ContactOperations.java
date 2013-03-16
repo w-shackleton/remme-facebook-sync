@@ -23,7 +23,7 @@
 package ro.weednet.contactssync.platform;
 
 import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
+import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;

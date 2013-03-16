@@ -32,7 +32,7 @@ import com.facebook.model.GraphUser;
 
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
+import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.activities.Preferences;
 
 import android.accounts.Account;
