@@ -195,7 +195,7 @@ public class Preferences extends PreferenceActivity {
 			findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
 			findPreference("sync_emails").setOnPreferenceChangeListener(syncEmailsChange);
 			findPreference("show_notif").setOnPreferenceChangeListener(showNotificationsChange);
-			findPreference("conn_timeout").setOnPreferenceChangeListener(connectionTimeoutChange);
+			//findPreference("conn_timeout").setOnPreferenceChangeListener(connectionTimeoutChange);
 			
 			findPreference("faq").setOnPreferenceClickListener(faqClick);
 			findPreference("run_now").setOnPreferenceClickListener(syncNowClick);
