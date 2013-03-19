@@ -145,22 +145,28 @@ public class Preferences extends PreferenceActivity {
 		}
 	};
 	
-	@SuppressWarnings("deprecation")
+	
+	@Override
+	public void onBuildHeaders(List<Header> target) {
+		loadHeadersFromResource(R.xml.preferences_header, target);
+	}
+	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
+		
 		//TODO: use current/selected account (not the first one)
 		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
-		addPreferencesFromResource(R.xml.preferences_sync);
-		addPreferencesFromResource(R.xml.preferences_troubleshooting);
-		addPreferencesFromResource(R.xml.preferences_other);
-		addPreferencesFromResource(R.xml.preferences_about);
+	//	addPreferencesFromResource(R.xml.preferences_sync);
+	//	addPreferencesFromResource(R.xml.preferences_troubleshooting);
+	//	addPreferencesFromResource(R.xml.preferences_other);
+	//	addPreferencesFromResource(R.xml.preferences_about);
 	}
 	
-	@SuppressWarnings("deprecation")
-	@Override
-	public void onResume() {
-		super.onResume();
+//	@SuppressWarnings("deprecation")
+//	@Override
+	public void onResumee() {
+		//super.onResume();
 		
 		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.cancelAll();

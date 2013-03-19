@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+	<header
+		android:fragment="ro.weednet.contactssync.prefs.SyncFragment"
+		android:title="@string/prefs_cat_sync_title"
+		android:summary="@string/prefs_about_summary" />
+</preference-headers>
