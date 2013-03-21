@@ -25,7 +25,6 @@ package ro.weednet.contactssync.preferences;
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.activities.Preferences;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -40,53 +39,28 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 public class SyncFragment extends PreferenceFragment {
-	private Account[] mAccounts;
-	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		//TODO: use current/selected account (not the first one)
 		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
 		addPreferencesFromResource(R.xml.preferences_sync);
-	//	addPreferencesFromResource(R.xml.preferences_troubleshooting);
-	//	addPreferencesFromResource(R.xml.preferences_other);
-	//	addPreferencesFromResource(R.xml.preferences_about);
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
 		
-		ContactsSync app = ContactsSync.getInstance();
-		
-		AccountManager am = AccountManager.get(SyncFragment.this.getActivity());
-		mAccounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
-		
-		if (mAccounts.length > 0) {
-			if (ContentResolver.getSyncAutomatically(mAccounts[0], ContactsContract.AUTHORITY)) {
-				if (app.getSyncFrequency() == 0) {
-					app.setSyncFrequency(Preferences.DEFAULT_SYNC_FREQUENCY);
-					app.savePreferences();
-					ContentResolver.addPeriodicSync(mAccounts[0], ContactsContract.AUTHORITY, new Bundle(), Preferences.DEFAULT_SYNC_FREQUENCY * 3600);
-				}
-			} else {
-				if (app.getSyncFrequency() > 0) {
-					app.setSyncFrequency(0);
-					app.savePreferences();
-				}
-			}
-			
-			findPreference("sync_type").setOnPreferenceChangeListener(syncTypeChange);
-			findPreference("sync_freq").setOnPreferenceChangeListener(syncFreqChange);
-			findPreference("pic_size").setOnPreferenceChangeListener(picSizeChange);
-			findPreference("sync_all").setOnPreferenceChangeListener(syncAllChange);
-			findPreference("sync_wifi_only").setOnPreferenceChangeListener(syncWifiOnlyChange);
-			findPreference("sync_join_by_id").setOnPreferenceChangeListener(syncJoinByIdChange);
-			findPreference("sync_birthdays").setOnPreferenceChangeListener(syncBirthdaysChange);
-			findPreference("birthday_format").setOnPreferenceChangeListener(birthdayFormatChange);
-			findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
-			findPreference("sync_emails").setOnPreferenceChangeListener(syncEmailsChange);
-		}
+		findPreference("sync_type").setOnPreferenceChangeListener(syncTypeChange);
+		findPreference("sync_freq").setOnPreferenceChangeListener(syncFreqChange);
+		findPreference("pic_size").setOnPreferenceChangeListener(picSizeChange);
+		findPreference("sync_all").setOnPreferenceChangeListener(syncAllChange);
+		findPreference("sync_wifi_only").setOnPreferenceChangeListener(syncWifiOnlyChange);
+		findPreference("sync_join_by_id").setOnPreferenceChangeListener(syncJoinByIdChange);
+		findPreference("sync_birthdays").setOnPreferenceChangeListener(syncBirthdaysChange);
+		findPreference("birthday_format").setOnPreferenceChangeListener(birthdayFormatChange);
+		findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
+		findPreference("sync_emails").setOnPreferenceChangeListener(syncEmailsChange);
 	}
 	
 	Preference.OnPreferenceChangeListener syncTypeChange = new Preference.OnPreferenceChangeListener() {
