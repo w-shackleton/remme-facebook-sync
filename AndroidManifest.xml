@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="ro.weednet.contactssync.testing"
-	android:versionCode="39"
-	android:versionName="1.2.0">
+	android:versionCode="40"
+	android:versionName="1.2.0.1">
 	
 	<uses-sdk
 		android:minSdkVersion="14"
@@ -51,7 +51,7 @@
 				android:name="android.provider.CONTACTS_STRUCTURE"
 				android:resource="@xml/contacts" />
 		</service>
-		<service android:exported="true" android:name=".notifier.NotifierService" />
+		<service android:exported="true" android:name="ro.weednet.contactssync.notifier.NotifierService" />
 		<activity
 			android:name="ro.weednet.contactssync.authenticator.AuthenticatorActivity"
 			android:configChanges="orientation"
