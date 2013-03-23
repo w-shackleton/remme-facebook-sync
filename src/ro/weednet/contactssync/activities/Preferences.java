@@ -151,6 +151,8 @@ public class Preferences extends PreferenceActivity {
 		super.onCreate(icicle);
 		//TODO: use current/selected account (not the first one)
 		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
+		
+		getPreferenceManager().setSharedPreferencesName(ContactsSync.NAMESPACE);
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
 		addPreferencesFromResource(R.xml.preferences_other);
