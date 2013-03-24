@@ -5,13 +5,18 @@
 	<RelativeLayout
 		android:id="@+id/status"
 		android:layout_width="match_parent"
-		android:layout_height="50dp"
+		android:layout_height="wrap_content"
 		android:gravity="center"
-		android:background="#FFFFAA">
+		android:background="#FFFFFF">
 		<TextView
+			android:id="@+id/status_message"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="sync status placeholder" />
+			android:textIsSelectable="true"
+			android:textSize="16sp"
+			android:textStyle="bold"
+			android:padding="5dp"
+			android:textColor="#000000" />
 	</RelativeLayout>
 	<LinearLayout
 		android:id="@+id/settings"

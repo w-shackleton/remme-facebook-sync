@@ -29,6 +29,7 @@ import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
 import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
 import ro.weednet.contactssync.client.RawContact;
+import ro.weednet.contactssync.platform.ContactManager;
 import ro.weednet.contactssync.preferences.GlobalFragment;
 
 import android.accounts.Account;
@@ -39,10 +40,12 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SyncStatusObserver;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class Preferences extends Activity {
 	public final static ContactsSync.SyncType DEFAULT_SYNC_TYPE = ContactsSync.SyncType.MEDIUM;
@@ -61,6 +64,25 @@ public class Preferences extends Activity {
 	
 	private Dialog mAuthDialog;
 	private GlobalFragment mFragment;
+	private SyncStatusObserver mSyncObserver = new SyncStatusObserver() {
+		@Override
+		public void onStatusChanged(final int which) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					AccountManager am = AccountManager.get(Preferences.this);
+					Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
+					
+					if (accounts.length == 0) {
+						return;
+					}
+					
+					updateStatusMessage(accounts[0], which);
+				}
+			});
+		}
+	};
+	private Object mSyncObserverHandler = null;
 	
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -99,6 +121,9 @@ public class Preferences extends Activity {
 					app.savePreferences();
 				}
 			}
+			updateStatusMessage(accounts[0], 0);
+			final int mask = ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING;
+			mSyncObserverHandler = ContentResolver.addStatusChangeListener(mask, mSyncObserver);
 		} else {
 			if (mAuthDialog != null) {
 				mAuthDialog.dismiss();
@@ -134,6 +159,15 @@ public class Preferences extends Activity {
 	}
 	
 	@Override
+	public void onPause() {
+		super.onPause();
+		
+		if (mSyncObserverHandler != null) {
+			ContentResolver.removeStatusChangeListener(mSyncObserverHandler);
+		}
+	}
+	
+	@Override
 	public void onBackPressed() {
 		ContactsSync app = ContactsSync.getInstance();
 		
@@ -142,5 +176,18 @@ public class Preferences extends Activity {
 		}
 		
 		finish();
+	}
+	
+	protected void updateStatusMessage(Account account, int code) {
+		TextView statusView = (TextView) findViewById(R.id.status_message);
+		
+		if (ContentResolver.isSyncPending(account, ContactsContract.AUTHORITY)) {
+			statusView.setText("Sync pending");
+		} else if (ContentResolver.isSyncActive(account, ContactsContract.AUTHORITY)) {
+			statusView.setText("Syncing ..");
+		} else {
+			int count = ContactManager.getLocalContactsCount(this, account);
+			statusView.setText("Sync idle. " + count + " contacts imported.");
+		}
 	}
 }
