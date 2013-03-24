@@ -24,6 +24,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
@@ -153,10 +154,7 @@ public class GlobalFragment extends PreferenceFragment {
 		Intent test_intent = new Intent(getPreferenceActivity(), TestFacebookApi.class);
 		findPreference("test_fb_api").setIntent(test_intent);
 		
-		Intent email_intent = new Intent(Intent.ACTION_SENDTO);
-		email_intent.setData(Uri.parse("mailto:" + getString(R.string.contact_email)
-				+ "?subject=Bug%20report%20for%20application%20" + getString(R.string.app_name)));
-		findPreference("contact_bug").setIntent(email_intent);
+		findPreference("contact_bug").setOnPreferenceClickListener(contactListener);
 	}
 	protected void setOtherEvents() {
 		findPreference("disable_ads").setOnPreferenceChangeListener(disableAdsChange);
@@ -474,6 +472,33 @@ public class GlobalFragment extends PreferenceFragment {
 			faqDialog.show();
 			
 			return false;
+		}
+	};
+	Preference.OnPreferenceClickListener contactListener = new Preference.OnPreferenceClickListener() {
+		@Override
+		public boolean onPreferenceClick(Preference preference) {
+			final Dialog dialog = new Dialog(getPreferenceActivity());
+			dialog.setContentView(R.layout.contact);
+			dialog.setTitle(getString(R.string.contact_via));
+			dialog.findViewById(R.id.github_btn).setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_url)));
+					startActivity(intent);
+					dialog.dismiss();
+				}
+			});
+			dialog.findViewById(R.id.email_btn).setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					Intent intent = new Intent(Intent.ACTION_SENDTO);
+					intent.setData(Uri.parse("mailto:" + getString(R.string.contact_email)
+						+ "?subject=Bug%20report%20for%20application%20" + getString(R.string.app_name)));
+					startActivity(intent);
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
+			
+			return true;
 		}
 	};
 	

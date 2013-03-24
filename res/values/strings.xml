@@ -8,6 +8,7 @@
 	<string name="profile_action">Facebook profile</string>
 	<string name="view_profile">View Profile</string>
 	<string name="facebook_app_id">104789639646317</string>
+	<string name="github_url">https://github.com/loadrunner/Facebook-Contact-Sync</string>
 	
 	<string name="add_account">Add account</string>
 	<string name="exit">Exit</string>
@@ -69,4 +70,8 @@
 	<string name="test_start_btn">Start test</string>
 	<string name="test_auth_key">1. Checking permissions</string>
 	<string name="test_get_friends">2. Checking friends</string>
+	
+	<string name="contact_via">Contact via ..</string>
+	<string name="github_btn">Github</string>
+	<string name="email_btn">Email</string>
 </resources>
