@@ -8,6 +8,7 @@
 	<string name="profile_action">Facebook profile</string>
 	<string name="view_profile">View Profile</string>
 	<string name="facebook_app_id">104789639646317</string>
+	<string name="donate_url">https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=7SUETTCRKTMKY</string>
 	<string name="github_url">https://github.com/loadrunner/Facebook-Contact-Sync</string>
 	
 	<string name="add_account">Add account</string>

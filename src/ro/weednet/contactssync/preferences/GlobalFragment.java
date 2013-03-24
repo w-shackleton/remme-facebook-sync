@@ -160,8 +160,7 @@ public class GlobalFragment extends PreferenceFragment {
 		findPreference("disable_ads").setOnPreferenceChangeListener(disableAdsChange);
 	}
 	protected void setAboutEvents() {
-		String donateUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7SUETTCRKTMKY";
-		Intent donate_intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donateUrl));
+		Intent donate_intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.donate_url)));
 		findPreference("donate").setIntent(donate_intent);
 		
 		String version = "";
