@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.R;
+import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.activities.Preferences;
 import ro.weednet.contactssync.activities.TestFacebookApi;
 import android.accounts.Account;
