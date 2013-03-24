@@ -103,6 +103,8 @@ public class GlobalFragment extends PreferenceFragment {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		
+		getPreferenceManager().setSharedPreferencesName(ContactsSync.NAMESPACE);
+		
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
 		addPreferencesFromResource(R.xml.preferences_other);

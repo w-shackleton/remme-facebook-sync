@@ -37,8 +37,8 @@ public class ContactsSync extends Application {
 	public static enum SyncType {
 		SOFT, MEDIUM, HARD, LEGACY
 	}
+	public final static String NAMESPACE = "ro.weednet.contactssync_preferences";
 	
-	private final static String _namespace = "ro.weednet.contactssync_preferences";
 	private SyncType mSyncType;
 	private int mSyncFreq;
 	private int mPicSize;
@@ -65,7 +65,7 @@ public class ContactsSync extends Application {
 	}
 	
 	private SharedPreferences getSharedPreferences() {
-		return getSharedPreferences(_namespace, MODE_PRIVATE);
+		return getSharedPreferences(NAMESPACE, MODE_PRIVATE);
 	}
 	
 	public Context getContext() {
