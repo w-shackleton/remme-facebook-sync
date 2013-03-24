@@ -29,6 +29,7 @@ import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
 import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
 import ro.weednet.contactssync.client.RawContact;
+import ro.weednet.contactssync.preferences.GlobalFragment;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -38,16 +39,9 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 
 public class Preferences extends Activity {
@@ -66,40 +60,18 @@ public class Preferences extends Activity {
 	public final static boolean DEFAULT_DISABLE_ADS = false;
 	
 	private Dialog mAuthDialog;
-	private Account[] mAccounts;
-	
-	//@Override
-//	public void onBuildHeaders(List<Header> target) {
-//		loadHeadersFromResource(R.xml.preferences_header, target);
-//	}
+	private GlobalFragment mFragment;
 	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		
-	//	if (hasHeaders()) {
-	//		TextView v = new TextView(this);
-	//		v.setText("Some text ..");
-	//		setListFooter(v);
-	//	}
-		
 		setContentView(R.layout.preferences);
 		
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-	//	ft.replace(R.id.content, new OtherFragment());
-		ft.replace(R.id.settings, new AllFragment());
-	//	ft.add(R.id.sync, new SyncFragment());
-	//	ft.add(R.id.content, new TroubleshootFragment());
-	//	ft.add(R.id.content, new OtherFragment());
-	//	ft.add(R.id.content, new AboutFragment());
+		mFragment = new GlobalFragment();
+		ft.replace(R.id.settings, mFragment);
 		ft.commit();
-		
-		//TODO: use current/selected account (not the first one)
-		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
-	//	addPreferencesFromResource(R.xml.preferences_sync);
-	//	addPreferencesFromResource(R.xml.preferences_troubleshooting);
-	//	addPreferencesFromResource(R.xml.preferences_other);
-	//	addPreferencesFromResource(R.xml.preferences_about);
 	}
 	
 	@Override
@@ -109,14 +81,17 @@ public class Preferences extends Activity {
 		ContactsSync app = ContactsSync.getInstance();
 		
 		AccountManager am = AccountManager.get(this);
-		mAccounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
+		Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
 		
-		if (mAccounts.length > 0) {
-			if (ContentResolver.getSyncAutomatically(mAccounts[0], ContactsContract.AUTHORITY)) {
+		if (accounts.length > 0) {
+			//TODO: use current/selected account (not the first one)
+			// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
+			mFragment.setAccount(accounts[0]);
+			if (ContentResolver.getSyncAutomatically(accounts[0], ContactsContract.AUTHORITY)) {
 				if (app.getSyncFrequency() == 0) {
 					app.setSyncFrequency(Preferences.DEFAULT_SYNC_FREQUENCY);
 					app.savePreferences();
-					ContentResolver.addPeriodicSync(mAccounts[0], ContactsContract.AUTHORITY, new Bundle(), Preferences.DEFAULT_SYNC_FREQUENCY * 3600);
+					ContentResolver.addPeriodicSync(accounts[0], ContactsContract.AUTHORITY, new Bundle(), Preferences.DEFAULT_SYNC_FREQUENCY * 3600);
 				}
 			} else {
 				if (app.getSyncFrequency() > 0) {
@@ -167,110 +142,5 @@ public class Preferences extends Activity {
 		}
 		
 		finish();
-	}
-	
-	public static class AllFragment extends PreferenceFragment {
-		@Override
-		public void onCreate(Bundle icicle) {
-			super.onCreate(icicle);
-			
-			addPreferencesFromResource(R.xml.preferences_sync);
-			addPreferencesFromResource(R.xml.preferences_troubleshooting);
-			addPreferencesFromResource(R.xml.preferences_other);
-			addPreferencesFromResource(R.xml.preferences_about);
-		}
-		
-		@Override
-		public void onResume() {
-			super.onResume();
-			
-			findPreference("disable_ads").setOnPreferenceChangeListener(disableAdsChange);
-		}
-		
-		Preference.OnPreferenceChangeListener disableAdsChange = new Preference.OnPreferenceChangeListener() {
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				try {
-					ContactsSync app = ContactsSync.getInstance();
-					app.setDisableAds((Boolean) newValue);
-					return true;
-				} catch (Exception e) {
-					Log.d("contactsync-preferences", "error: " + e.getMessage());
-					return false;
-				}
-			}
-		};
-	}
-	
-	public static class OtherFragment extends PreferenceFragment {
-		@Override
-		public void onCreate(Bundle icicle) {
-			super.onCreate(icicle);
-			
-			addPreferencesFromResource(R.xml.preferences_other);
-		}
-		
-		@Override
-		public void onResume() {
-			super.onResume();
-			
-			findPreference("disable_ads").setOnPreferenceChangeListener(disableAdsChange);
-		}
-		
-		Preference.OnPreferenceChangeListener disableAdsChange = new Preference.OnPreferenceChangeListener() {
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				try {
-					ContactsSync app = ContactsSync.getInstance();
-					app.setDisableAds((Boolean) newValue);
-					return true;
-				} catch (Exception e) {
-					Log.d("contactsync-preferences", "error: " + e.getMessage());
-					return false;
-				}
-			}
-		};
-	}
-	
-	public static class AboutFragment extends PreferenceFragment {
-		@Override
-		public void onCreate(Bundle icicle) {
-			super.onCreate(icicle);
-			
-			addPreferencesFromResource(R.xml.preferences_about);
-		}
-		
-		@Override
-		public void onResume() {
-			super.onResume();
-			
-			View v = getView();
-			LayoutParams params = v.getLayoutParams();
-			params.height = 300;//LayoutParams.WRAP_CONTENT;
-			v.setLayoutParams(params);
-			
-			String donateUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=7SUETTCRKTMKY";
-			Intent donate_intent = new Intent(Intent.ACTION_VIEW, Uri.parse(donateUrl));
-			findPreference("donate").setIntent(donate_intent);
-			
-			String version = "";
-			try {
-				version = getActivity().getPackageManager()
-					.getPackageInfo(getActivity().getPackageName(), 0).versionName;
-			} catch (NameNotFoundException e1) { }
-			findPreference("version").setSummary(version);
-			
-			boolean market_installed = true;
-			try {
-				getActivity().getPackageManager().getPackageInfo("com.android.vending", 0);
-			} catch (PackageManager.NameNotFoundException e) {
-				market_installed = false;
-			}
-			if (market_installed) {
-				Intent rate_intent = new Intent(Intent.ACTION_VIEW);
-				rate_intent.setData(Uri.parse("market://details?id=ro.weednet.contactssync"));
-				findPreference("rate_app").setIntent(rate_intent);
-			} else {
-				findPreference("rate_app").setEnabled(false);
-			}
-		}
 	}
 }

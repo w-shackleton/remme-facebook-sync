@@ -12,6 +12,9 @@
 	<string name="add_account">Add account</string>
 	<string name="exit">Exit</string>
 	
+	<string name="prefs_on">On</string>
+	<string name="prefs_off">Off</string>
+	
 	<string name="prefs_cat_sync_title">Sync settings</string>
 	<string name="prefs_sync_type_title">Sync type</string>
 	<string name="prefs_sync_type_summary">Control how contact details are synced. (photos, statuses)</string>

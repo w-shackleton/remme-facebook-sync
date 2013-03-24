@@ -5,13 +5,13 @@
 	<RelativeLayout
 		android:id="@+id/status"
 		android:layout_width="match_parent"
-		android:layout_height="60dp"
+		android:layout_height="50dp"
 		android:gravity="center"
 		android:background="#FFFFAA">
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="status .. " />
+			android:text="sync status placeholder" />
 	</RelativeLayout>
 	<LinearLayout
 		android:id="@+id/settings"
