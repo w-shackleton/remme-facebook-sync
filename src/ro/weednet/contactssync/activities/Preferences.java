@@ -25,7 +25,6 @@ package ro.weednet.contactssync.activities;
 import com.appbrain.AppBrain;
 
 import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
 import ro.weednet.contactssync.client.RawContact;
@@ -33,7 +32,6 @@ import ro.weednet.contactssync.platform.ContactManager;
 import ro.weednet.contactssync.preferences.GlobalFragment;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
@@ -70,15 +68,12 @@ public class Preferences extends Activity {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					AccountManager am = AccountManager.get(Preferences.this);
-					Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
-					
 					//TODO: add support for multiple accounts (check account name)
-					if (accounts.length == 0) {
-						return;
-					}
+					Account account = ContactsSync.getInstance().getAccount();
 					
-					updateStatusMessage(accounts[0], which);
+					if (account != null) {
+						updateStatusMessage(account, which);
+					}
 				}
 			});
 		}
@@ -103,18 +98,17 @@ public class Preferences extends Activity {
 		
 		ContactsSync app = ContactsSync.getInstance();
 		
-		AccountManager am = AccountManager.get(this);
-		Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
+		//TODO: use current/selected account (not the first one)
+		Account account = ContactsSync.getInstance().getAccount();
 		
-		if (accounts.length > 0) {
-			//TODO: use current/selected account (not the first one)
+		if (account != null) {
 			// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
-			mFragment.setAccount(accounts[0]);
-			if (ContentResolver.getSyncAutomatically(accounts[0], ContactsContract.AUTHORITY)) {
+			mFragment.setAccount(account);
+			if (ContentResolver.getSyncAutomatically(account, ContactsContract.AUTHORITY)) {
 				if (app.getSyncFrequency() == 0) {
 					app.setSyncFrequency(Preferences.DEFAULT_SYNC_FREQUENCY);
 					app.savePreferences();
-					ContentResolver.addPeriodicSync(accounts[0], ContactsContract.AUTHORITY, new Bundle(), Preferences.DEFAULT_SYNC_FREQUENCY * 3600);
+					ContentResolver.addPeriodicSync(account, ContactsContract.AUTHORITY, new Bundle(), Preferences.DEFAULT_SYNC_FREQUENCY * 3600);
 				}
 			} else {
 				if (app.getSyncFrequency() > 0) {
@@ -122,7 +116,7 @@ public class Preferences extends Activity {
 					app.savePreferences();
 				}
 			}
-			updateStatusMessage(accounts[0], 0);
+			updateStatusMessage(account, 0);
 			final int mask = ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING;
 			mSyncObserverHandler = ContentResolver.addStatusChangeListener(mask, mSyncObserver);
 		} else {
