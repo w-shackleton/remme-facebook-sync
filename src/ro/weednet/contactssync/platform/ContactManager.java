@@ -102,7 +102,7 @@ public class ContactManager {
 		return groupId;
 	}
 	
-	public static synchronized List<RawContact> updateContacts(Context context, String account,
+	public static synchronized List<RawContact> updateContacts(Context context, Account account,
 			List<RawContact> rawContacts, long groupId, boolean joinById, boolean allContacts) {
 		
 		ArrayList<RawContact> syncList = new ArrayList<RawContact>();
@@ -112,7 +112,7 @@ public class ContactManager {
 		Log.d(TAG, "In updateContacts");
 		for (final RawContact rawContact : rawContacts) {
 			
-			final long rawContactId = lookupRawContact(resolver, rawContact.getUid());
+			final long rawContactId = lookupRawContact(resolver, account, rawContact.getUid());
 			if (rawContactId != 0) {
 				updateContact(context, resolver, rawContact, true, true, rawContactId, batchOperation);
 				syncList.add(rawContact);
@@ -264,12 +264,12 @@ public class ContactManager {
 		return contacts;
 	}
 	
-	public static void addJoins(Context context, List<RawContact> rawContacts) {
+	public static void addJoins(Context context, Account account, List<RawContact> rawContacts) {
 		final ContentResolver resolver = context.getContentResolver();
 		final BatchOperation batchOperation = new BatchOperation(context, resolver);
 		for (RawContact rawContact : rawContacts) {
 			if (rawContact.getJoinContactId() > 0) {
-				addAggregateException(context, rawContact, batchOperation);
+				addAggregateException(context, account, rawContact, batchOperation);
 			}
 		}
 		batchOperation.execute();
@@ -325,14 +325,13 @@ public class ContactManager {
 		batchOperation.execute();
 	}
 	
-	public static void addContact(Context context, String accountName,
+	public static void addContact(Context context, Account account,
 			RawContact rawContact, long groupId, boolean inSync,
 			BatchOperation batchOperation) {
 		
 		// Put the data in the contacts provider
 		final ContactOperations contactOp = ContactOperations.createNewContact(
-				context, rawContact.getUid(), accountName, inSync,
-				batchOperation);
+				context, rawContact.getUid(), account, inSync, batchOperation);
 		
 		contactOp
 				.addName(rawContact.getFirstName(), rawContact.getLastName())
@@ -487,9 +486,9 @@ public class ContactManager {
 		contactOp.updateSyncTimestamp(System.currentTimeMillis(), photo.getTimestamp(), uri);
 	}
 	
-	public static void addAggregateException(Context context,
+	public static void addAggregateException(Context context, Account account,
 			RawContact rawContact, BatchOperation batchOperation) {
-		final long rawContactId = lookupRawContact(context.getContentResolver(), rawContact.getUid());
+		final long rawContactId = lookupRawContact(context.getContentResolver(), account, rawContact.getUid());
 		
 		if (rawContactId <= 0) {
 			return;
@@ -537,11 +536,12 @@ public class ContactManager {
 			).build());
 	}
 	
-	private static long lookupRawContact(ContentResolver resolver, String serverContactId) {
+	private static long lookupRawContact(ContentResolver resolver, Account account,
+			String serverContactId) {
 		long rawContactId = 0;
 		final Cursor c = resolver.query(UserIdQuery.CONTENT_URI,
 				UserIdQuery.PROJECTION, UserIdQuery.SELECTION,
-				new String[] { serverContactId }, null);
+				new String[] { account.name, account.type, serverContactId }, null);
 		try {
 			if ((c != null) && c.moveToFirst()) {
 				rawContactId = c.getLong(UserIdQuery.COLUMN_RAW_CONTACT_ID);
@@ -691,9 +691,9 @@ public class ContactManager {
 		
 		public final static Uri CONTENT_URI = RawContacts.CONTENT_URI;
 		
-		public static final String SELECTION = RawContacts.ACCOUNT_TYPE + "='"
-				+ Constants.ACCOUNT_TYPE + "' AND " + RawContacts.SOURCE_ID
-				+ "=?";
+		public static final String SELECTION = RawContacts.ACCOUNT_NAME + "=? AND "
+				+ RawContacts.ACCOUNT_TYPE + "=? AND "
+				+ RawContacts.SOURCE_ID + "=?";
 	}
 	
 	@SuppressWarnings("unused")

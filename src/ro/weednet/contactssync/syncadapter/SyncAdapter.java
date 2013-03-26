@@ -102,13 +102,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			List<RawContact> rawContacts = nu.getContacts(account);
 			
 			List<RawContact> syncedContacts = ContactManager.updateContacts(
-				mContext, account.name, rawContacts, groupId,
+				mContext, account, rawContacts, groupId,
 				app.getJoinById(), app.getSyncAllContacts());
 			
 			ContactManager.deleteMissingContacts(mContext, localContacts, syncedContacts);
 			
 			if (app.getJoinById()) {
-				ContactManager.addJoins(mContext, rawContacts);
+				ContactManager.addJoins(mContext, account, rawContacts);
 			}
 			
 			if (app.getSyncStatuses()
