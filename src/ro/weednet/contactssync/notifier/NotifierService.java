@@ -65,6 +65,7 @@ public class NotifierService extends IntentService {
 			Log.i(TAG, "Contact found: " + uri);
 			
 			String accountName = c.getString(c.getColumnIndex(RawContacts.ACCOUNT_NAME));
+			String accountType = c.getString(c.getColumnIndex(RawContacts.ACCOUNT_TYPE));
 			long rawContactId = ContentUris.parseId(uri);
 			String uid = c.getString(c.getColumnIndex(RawContacts.SOURCE_ID));
 			RawContact rawContact = RawContact.create(rawContactId, uid);
@@ -80,7 +81,7 @@ public class NotifierService extends IntentService {
 		//	RawContact rawContact = null;//new RawContact(rawContactId, uid, email, firstName, lastName, birthday, statusMessage, statusTimestamp, avatarUrl, syncState);
 			
 			AccountManager am = AccountManager.get(this);
-			Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
+			Account[] accounts = am.getAccountsByType(accountType);
 			Account account = null;
 			
 			for (int i = 0; i < accounts.length; i++) {

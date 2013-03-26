@@ -73,6 +73,7 @@ public class Preferences extends Activity {
 					AccountManager am = AccountManager.get(Preferences.this);
 					Account[] accounts = am.getAccountsByType(Constants.ACCOUNT_TYPE);
 					
+					//TODO: add support for multiple accounts (check account name)
 					if (accounts.length == 0) {
 						return;
 					}

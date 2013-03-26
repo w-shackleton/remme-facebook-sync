@@ -22,9 +22,9 @@
  */
 package ro.weednet.contactssync.platform;
 
-import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.R;
 import ro.weednet.contactssync.client.NetworkUtilities;
+import android.accounts.Account;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -53,9 +53,9 @@ public class ContactOperations {
 	private boolean mIsYieldAllowed;
 	
 	public static ContactOperations createNewContact(Context context,
-			String userId, String accountName, boolean isSyncOperation,
+			String userId, Account account, boolean isSyncOperation,
 			BatchOperation batchOperation) {
-		return new ContactOperations(context, userId, accountName,
+		return new ContactOperations(context, userId, account,
 				isSyncOperation, batchOperation);
 	}
 	
@@ -71,14 +71,14 @@ public class ContactOperations {
 		mBatchOperation = batchOperation;
 	}
 	
-	public ContactOperations(Context context, String userId, String accountName,
+	public ContactOperations(Context context, String userId, Account account,
 			boolean isSyncOperation, BatchOperation batchOperation) {
 		this(context, isSyncOperation, batchOperation);
 		mBackReference = mBatchOperation.size();
 		mIsNewContact = true;
 		mValues.put(RawContacts.SOURCE_ID, userId);
-		mValues.put(RawContacts.ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-		mValues.put(RawContacts.ACCOUNT_NAME, accountName);
+		mValues.put(RawContacts.ACCOUNT_TYPE, account.type);
+		mValues.put(RawContacts.ACCOUNT_NAME, account.name);
 		ContentProviderOperation.Builder builder = newInsertCpo(
 				RawContacts.CONTENT_URI, mIsSyncOperation, true).withValues(mValues);
 		mBatchOperation.add(builder.build());
