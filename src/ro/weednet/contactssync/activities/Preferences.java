@@ -102,6 +102,10 @@ public class Preferences extends Activity {
 		Account account = ContactsSync.getInstance().getAccount();
 		
 		if (account != null) {
+			if (mAuthDialog != null) {
+				mAuthDialog.dismiss();
+			}
+			
 			// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
 			mFragment.setAccount(account);
 			if (ContentResolver.getSyncAutomatically(account, ContactsContract.AUTHORITY)) {
