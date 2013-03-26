@@ -169,7 +169,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 				app.setConnectionTimeout(Preferences.DEFAULT_CONNECTION_TIMEOUT);
 				app.savePreferences();
 				
-				final String username = (String) user.getProperty("email");
+				final String username =
+					user.getUsername() != null && user.getUsername().length() > 0
+					? user.getUsername() : user.getId();
 				final String access_token = Session.getActiveSession().getAccessToken();
 				final int sync_freq = app.getSyncFrequency() * 3600;
 				
