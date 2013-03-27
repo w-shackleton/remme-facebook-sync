@@ -201,6 +201,7 @@ public class ContactManager {
 		int count = 0;
 		try {
 			count = c.getCount();
+		} catch (Exception e) {
 		} finally {
 			if (c != null) {
 				c.close();
