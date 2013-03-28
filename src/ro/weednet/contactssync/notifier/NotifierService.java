@@ -71,7 +71,7 @@ public class NotifierService extends IntentService {
 			RawContact rawContact = RawContact.create(rawContactId, uid);
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
 			
-			if (System.currentTimeMillis() - checkTimestamp < 60000) {
+			if (System.currentTimeMillis() - checkTimestamp < 86400000) {
 				Log.i(TAG, "contact up to date. quiting");
 				return;
 			}
