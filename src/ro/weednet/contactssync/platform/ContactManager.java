@@ -624,9 +624,14 @@ public class ContactManager {
 		try {
 			c.moveToFirst();
 			return c.getInt(0);
+		} catch (Exception e) {
 		} finally {
-			c.close();
+			if (c != null) {
+				c.close();
+			}
 		}
+		
+		return ContactsSync.getInstance().getPictureSize();
 	}
 	
 	final public static class EditorQuery {
