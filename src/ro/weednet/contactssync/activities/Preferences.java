@@ -35,7 +35,9 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
@@ -97,6 +99,9 @@ public class Preferences extends Activity {
 		super.onResume();
 		
 		ContactsSync app = ContactsSync.getInstance();
+		
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.cancelAll();
 		
 		//TODO: use current/selected account (not the first one)
 		Account account = ContactsSync.getInstance().getAccount();
