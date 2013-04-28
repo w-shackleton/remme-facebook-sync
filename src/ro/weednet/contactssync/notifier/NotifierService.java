@@ -53,7 +53,9 @@ public class NotifierService extends IntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if (((ContactsSync) getApplication()).getSyncType() == ContactsSync.SyncType.LEGACY) {
+		ContactsSync app = ((ContactsSync) getApplication());
+		
+		if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
 			return;
 		}
 		
@@ -71,7 +73,7 @@ public class NotifierService extends IntentService {
 			RawContact rawContact = RawContact.create(rawContactId, uid);
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
 			
-			if (System.currentTimeMillis() - checkTimestamp < 86400000) {
+			if (System.currentTimeMillis() - checkTimestamp < Math.min(86400000, app.getSyncFrequency() * 3600000)) {
 				Log.i(TAG, "contact up to date. quiting");
 				return;
 			}
