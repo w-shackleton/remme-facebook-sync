@@ -163,7 +163,7 @@ final public class RawContact {
 				throw new JSONException("JSON contact missing required 'uid' field");
 			}
 			
-			final String email = !contact.isNull("username") ?
+			final String email = !contact.isNull("username") && contact.getString("username").length() > 0 ?
 					contact.getString("username") + "@facebook.com" : null;
 			final String firstName = !contact.isNull("first_name") ?
 					contact.getString("first_name") : null;
