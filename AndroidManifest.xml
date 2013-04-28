@@ -7,7 +7,7 @@
 	
 	<uses-sdk
 		android:minSdkVersion="8"
-		android:maxSdkVersion="13" />
+		android:maxSdkVersion="14" />
 	
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
