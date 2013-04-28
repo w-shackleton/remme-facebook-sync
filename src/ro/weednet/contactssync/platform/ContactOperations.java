@@ -230,10 +230,16 @@ public class ContactOperations {
 		return this;
 	}
 	
-	public ContactOperations updateSyncTimestamp(long checkTimestamp, long photoTimestamp, Uri uri) {
+	public ContactOperations updateSyncTimestamp1(long timestsamp, Uri uri) {
 		mValues.clear();
-		mValues.put(RawContacts.SYNC1, checkTimestamp);
-		mValues.put(RawContacts.SYNC2, photoTimestamp);
+		mValues.put(RawContacts.SYNC1, timestsamp);
+		addUpdateOp(uri);
+		return this;
+	}
+	
+	public ContactOperations updateSyncTimestamp2(long timestsamp, Uri uri) {
+		mValues.clear();
+		mValues.put(RawContacts.SYNC2, timestsamp);
 		addUpdateOp(uri);
 		return this;
 	}

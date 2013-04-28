@@ -306,10 +306,78 @@ final public class NetworkUtilities {
 			}
 		}
 		
-		Log.e("FacebookGetPhoto", "response: " + response.getGraphObject().getInnerJSONObject().toString());
+		Log.d("FacebookGetPhoto", "response: " + response.getGraphObject().getInnerJSONObject().toString());
 		String image = response.getGraphObject().getInnerJSONObject().getJSONObject("data").getString("url");
 		
 		return new ContactPhoto(contact, image, 0);
+	}
+	
+	@SuppressLint("SimpleDateFormat")
+	public List<ContactStreamItem> getContactStreamItems(RawContact contact, int since)
+			throws IOException, AuthenticationException, JSONException {
+		
+		Bundle params = new Bundle();
+		//ContactsSync app = ContactsSync.getInstance();
+		//params.putInt("timeout", app.getConnectionTimeout() * 1000);
+		params.putInt("since", since);
+		Request request = new Request(mSession, contact.getUid() + "/feed", params, HttpMethod.GET);
+		Response response = request.executeAndWait();
+		
+		if (response == null) {
+			throw new IOException();
+		}
+		if (response.getGraphObject() == null) {
+			if (response.getError() != null) {
+				if (response.getError().getErrorCode() == 190) {
+					throw new AuthenticationException();
+				} else {
+					throw new ParseException(response.getError().getErrorMessage());
+				}
+			} else {
+				throw new ParseException();
+			}
+		}
+		
+		Log.d("FacebookGetFeed", "response: " + response.getGraphObject().getInnerJSONObject().toString());
+		JSONArray data = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		List<ContactStreamItem> list = new ArrayList<ContactStreamItem>();
+		long timestamp;
+		String id, text;
+		JSONObject item;
+		for(int i = 0; i < data.length(); i++) {
+			item = data.getJSONObject(i);
+			id = item.optString("id");
+			if (id == null) {
+				Log.d("FacebookGetFeed", "item " + i + " has no id, skipping");
+				continue;
+			}
+			text = "no no no";
+			if (item.getString("type").equals("status")) {
+				text = item.getString("story");
+			} else if (item.getString("type").equals("photo")) {
+				text = item.getString("story");
+			} else if (item.getString("type").equals("link")) {
+				text = item.getString("story");
+			} else if (item.getString("type").equals("question")) {
+				text = item.getString("story");
+			} else {
+				continue;
+			}
+			
+			try {
+				timestamp = formatter.parse(item.getString("updated_time")).getTime();
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+				timestamp = System.currentTimeMillis();
+			}
+			Log.d("FacebookGetFeed", "item " + i + " - " + id + ": " + text);
+			Log.d("FacebookGetFeed", "timestamp: " + timestamp);
+			list.add(new ContactStreamItem(contact, id, text, timestamp));
+		}
+		
+		return list;
 	}
 	
 	/**
