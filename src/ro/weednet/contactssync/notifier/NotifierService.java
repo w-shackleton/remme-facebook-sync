@@ -34,7 +34,6 @@ import ro.weednet.contactssync.platform.BatchOperation;
 import ro.weednet.contactssync.platform.ContactManager;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.OperationCanceledException;
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -82,7 +81,7 @@ public class NotifierService extends IntentService {
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
 			long feedTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC2));
 			
-			if (System.currentTimeMillis() - checkTimestamp < Math.min(86400000, app.getSyncFrequency() * 3600000)) {
+			if (System.currentTimeMillis() - checkTimestamp < Math.min(14400000, app.getSyncFrequency() * 3600000)) {
 				Log.i(TAG, "contact up to date. quiting");
 				return;
 			}
