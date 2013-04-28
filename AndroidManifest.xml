@@ -6,7 +6,7 @@
 	android:versionName="1.2.1">
 	
 	<uses-sdk
-		android:minSdkVersion="14"
+		android:minSdkVersion="15"
 		android:targetSdkVersion="17" />
 	
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -21,6 +21,8 @@
 	<uses-permission android:name="android.permission.READ_SYNC_STATS" />
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+	<uses-permission android:name="android.permission.READ_SOCIAL_STREAM" />
+	<uses-permission android:name="android.permission.WRITE_SOCIAL_STREAM" />
 	
 	<application
 		android:name="ro.weednet.ContactsSync"

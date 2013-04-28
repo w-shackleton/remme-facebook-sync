@@ -29,6 +29,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
@@ -43,8 +45,11 @@ import android.provider.ContactsContract.DisplayPhoto;
 import android.provider.ContactsContract.Groups;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract.StatusUpdates;
+import android.provider.ContactsContract.StreamItemPhotos;
+import android.provider.ContactsContract.StreamItems;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +64,7 @@ import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.testing.R;
 import ro.weednet.contactssync.client.ContactPhoto;
+import ro.weednet.contactssync.client.ContactStreamItem;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import ro.weednet.contactssync.client.RawContact;
 
@@ -482,9 +488,40 @@ public class ContactManager {
 			Log.i(TAG, "creating row, count: " + c.getCount());
 			contactOp.addAvatar(photo.getPhotoUrl());
 		}
-		Log.i(TAG, "updating row");
+		Log.d(TAG, "updating check timestamp");
 		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
-		contactOp.updateSyncTimestamp(System.currentTimeMillis(), photo.getTimestamp(), uri);
+		contactOp.updateSyncTimestamp1(System.currentTimeMillis(), uri);
+	}
+	
+	public static void updateContactFeed(Context context, ContentResolver resolver, Account account,
+			long rawContactId, List<ContactStreamItem> items, long timestamp, BatchOperation batchOperation) {
+		
+		for (ContactStreamItem item : items) {
+			ContactManager.addStreamItem(context, resolver, account, rawContactId, item, batchOperation);
+			if (item.getTimestamp() > timestamp) {
+				timestamp = item.getTimestamp();
+			}
+		}
+		
+		final ContactOperations contactOp = ContactOperations.updateExistingContact(context, rawContactId, true, batchOperation);
+		
+		Log.d(TAG, "updating feed timestamp");
+		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
+		contactOp.updateSyncTimestamp2(timestamp, uri);
+	}
+	public static void addStreamItem(Context context, ContentResolver resolver, Account account,
+			long rawContactId, ContactStreamItem item, BatchOperation batchOperation){
+		
+		addContactStreamItem(context, rawContactId, account, item.getText(), item.getTimestamp(), batchOperation);
+		/*
+		List<Uri> uris = batchOperation.execute();
+		if (uris.size() > 0) {
+			Uri uri = uris.get(0);
+			Log.e("aaaaaaaaaaaaaaaaaaaa", "fdas"+uri.toString());
+			long streamItemId = Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
+			addStreamItemPhoto(context, resolver, streamItemId, account, batchOperation);
+		}
+		*/
 	}
 	
 	public static void addAggregateException(Context context, Account account,
@@ -527,6 +564,43 @@ public class ContactManager {
 					.newInsertCpo(StatusUpdates.CONTENT_URI, false, true)
 					.withValues(values).build());
 		}
+	}
+	
+	private static void addContactStreamItem(Context context, long rawContactId,
+		Account account, String text, long timestamp, BatchOperation batchOperation) {
+		
+		final ContentValues values = new ContentValues();
+		if (rawContactId > 0){
+			Log.e(TAG, "adding contact stream..");
+			values.put(StreamItems.RAW_CONTACT_ID, rawContactId);
+			values.put(StreamItems.TEXT, text);
+			values.put(StreamItems.COMMENTS, context.getResources().getString(R.string.via_facebook));
+			values.put(StreamItems.TIMESTAMP, timestamp);
+			values.put(StreamItems.ACCOUNT_NAME, account.name);
+			values.put(StreamItems.ACCOUNT_TYPE, account.type);
+			
+			batchOperation.add(ContactOperations.newInsertCpo(
+				StreamItems.CONTENT_URI, false, true).withValues(values).build());
+		}
+	}
+	
+	private static void addStreamItemPhoto(Context context, ContentResolver
+		resolver, long streamItemId, Account account, BatchOperation batchOperation){
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.facebook_icon);
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 30, stream);
+		byte[] photoData = stream.toByteArray();
+		
+		final ContentValues values = new ContentValues();
+		values.put(StreamItemPhotos.STREAM_ITEM_ID, streamItemId);
+		values.put(StreamItemPhotos.SORT_INDEX, 1);
+		values.put(StreamItemPhotos.PHOTO, photoData);
+		values.put(StreamItems.ACCOUNT_NAME, account.name);
+		values.put(StreamItems.ACCOUNT_TYPE, account.type);
+		
+		batchOperation.add(ContactOperations.newInsertCpo(
+			StreamItems.CONTENT_PHOTO_URI, false, true).withValues(values).build());
 	}
 	
 	private static void deleteContact(Context context, long rawContactId, BatchOperation batchOperation) {
@@ -633,6 +707,23 @@ public class ContactManager {
 		}
 		
 		return ContactsSync.getInstance().getPictureSize();
+	}
+	
+	public static int getStreamItemLimit(Context context) {
+		Cursor c = context.getContentResolver().query(StreamItems.CONTENT_LIMIT_URI,
+			new String[]{ StreamItems.MAX_ITEMS }, null, null, null);
+		
+		try {
+			c.moveToFirst();
+			return c.getInt(0);
+		} catch (Exception e) {
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+		}
+		
+		return 1;
 	}
 	
 	final public static class EditorQuery {

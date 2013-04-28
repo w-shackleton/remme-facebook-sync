@@ -156,7 +156,6 @@ public class ContactOperations {
 		if (avatarUrl != null) {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {
-				Log.e("DownloadPhoto", "image downloaded; addinf");
 				mValues.clear();
 				mValues.put(Photo.DATA1, avatarUrl);
 				mValues.put(Photo.PHOTO, avatarBuffer);
@@ -232,10 +231,16 @@ public class ContactOperations {
 		return this;
 	}
 	
-	public ContactOperations updateSyncTimestamp(long checkTimestamp, long photoTimestamp, Uri uri) {
+	public ContactOperations updateSyncTimestamp1(long timestsamp, Uri uri) {
 		mValues.clear();
-		mValues.put(RawContacts.SYNC1, checkTimestamp);
-		mValues.put(RawContacts.SYNC2, photoTimestamp);
+		mValues.put(RawContacts.SYNC1, timestsamp);
+		addUpdateOp(uri);
+		return this;
+	}
+	
+	public ContactOperations updateSyncTimestamp2(long timestsamp, Uri uri) {
+		mValues.clear();
+		mValues.put(RawContacts.SYNC2, timestsamp);
 		addUpdateOp(uri);
 		return this;
 	}
@@ -253,7 +258,6 @@ public class ContactOperations {
 		if (avatarUrl != null && !TextUtils.equals(existingAvatarUrl, avatarUrl)) {
 			byte[] avatarBuffer = NetworkUtilities.downloadAvatar(avatarUrl);
 			if (avatarBuffer != null) {
-				Log.e("DownloadPhoto", "image downloaded; updating");
 				mValues.clear();
 				mValues.put(Photo.DATA1, avatarUrl);
 				mValues.put(Photo.PHOTO, avatarBuffer);
@@ -262,8 +266,6 @@ public class ContactOperations {
 			} else {
 				Log.e("DownloadPhoto", "failed, buffer null");
 			}
-		} else {
-			Log.e("DownloadPhoto", "not doing it");
 		}
 		return this;
 	}

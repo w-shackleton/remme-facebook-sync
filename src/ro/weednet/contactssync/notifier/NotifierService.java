@@ -22,9 +22,12 @@
  */
 package ro.weednet.contactssync.notifier;
 
+import java.util.List;
+
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.client.ContactPhoto;
+import ro.weednet.contactssync.client.ContactStreamItem;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import ro.weednet.contactssync.client.RawContact;
 import ro.weednet.contactssync.platform.BatchOperation;
@@ -53,7 +56,9 @@ public class NotifierService extends IntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if (((ContactsSync) getApplication()).getSyncType() == ContactsSync.SyncType.LEGACY) {
+		ContactsSync app = ((ContactsSync) getApplication());
+		
+		if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
 			return;
 		}
 		
@@ -70,8 +75,9 @@ public class NotifierService extends IntentService {
 			String uid = c.getString(c.getColumnIndex(RawContacts.SOURCE_ID));
 			RawContact rawContact = RawContact.create(rawContactId, uid);
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
+			long feedTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC2));
 			
-			if (System.currentTimeMillis() - checkTimestamp < 86400000) {
+			if (System.currentTimeMillis() - checkTimestamp < Math.min(86400000, app.getSyncFrequency() * 3600000)) {
 				Log.i(TAG, "contact up to date. quiting");
 				return;
 			}
@@ -100,17 +106,36 @@ public class NotifierService extends IntentService {
 			try {
 				String authtoken = am.blockingGetAuthToken(account, Constants.AUTHTOKEN_TYPE, true);
 				NetworkUtilities nu = new NetworkUtilities(authtoken, this);
-				int size = ContactManager.getPhotoPickSize(this);
-				//TODO: use selected value
-				ContactPhoto photo = nu.getContactPhotoHD(rawContact, size, size);
-				ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
+				
+				try {
+					int size = ContactManager.getPhotoPickSize(this);
+					//TODO: use selected value
+					ContactPhoto photo = nu.getContactPhotoHD(rawContact, size, size);
+					ContactManager.updateContactPhotoHd(this, resolver, rawContactId, photo, batchOperation);
+				} catch (Exception e) {
+					Log.i(TAG, "photo update error: " + e.getMessage());
+					e.printStackTrace();
+				}
+				
+				if (app.getSyncStatuses()) {
+					try {
+						List<ContactStreamItem> items = nu.getContactStreamItems(rawContact, (int) (feedTimestamp/1000 + 1));
+					//	int numPhotos = ContactManager.getStreamItemLimit(this);
+						if (items.size() > 0) {
+							ContactManager.updateContactFeed(this, resolver, account,
+								rawContactId, items, feedTimestamp,batchOperation);
+						}
+					} catch (Exception e) {
+						Log.i(TAG, "stream update error: " + e.getMessage());
+						e.printStackTrace();
+					}
+				}
+				
 				batchOperation.execute();
 			} catch (Exception e) {
-				Log.i(TAG, "photo update error: " + e.getMessage());
+				Log.i(TAG, "fb sync update error: " + e.getMessage());
 				e.printStackTrace();
 			}
-			
-			//final Uri uri2 = ContentUris.withAppendedId(Data.CONTENT_URI, id);
 			
 		} else {
 			Log.i(TAG, "Contact not found: " + uri);
