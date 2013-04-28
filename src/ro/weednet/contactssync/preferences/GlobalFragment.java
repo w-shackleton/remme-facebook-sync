@@ -99,7 +99,6 @@ public class GlobalFragment extends PreferenceFragment {
 		}
 	};
 	
-	
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);

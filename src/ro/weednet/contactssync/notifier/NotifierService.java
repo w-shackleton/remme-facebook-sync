@@ -62,6 +62,10 @@ public class NotifierService extends IntentService {
 			return;
 		}
 		
+		if (app.getSyncWifiOnly() && !app.wifiConnected()) {
+			return;
+		}
+		
 		Uri uri = intent.getData();
 		final ContentResolver resolver = getContentResolver();
 		final Cursor c = resolver. query(uri, null, null, null, null);
@@ -77,7 +81,7 @@ public class NotifierService extends IntentService {
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
 			long feedTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC2));
 			
-			if (System.currentTimeMillis() - checkTimestamp < Math.min(86400000, app.getSyncFrequency() * 3600000)) {
+			if (System.currentTimeMillis() - checkTimestamp < Math.min(14400000, app.getSyncFrequency() * 3600000)) {
 				Log.i(TAG, "contact up to date. quiting");
 				return;
 			}
