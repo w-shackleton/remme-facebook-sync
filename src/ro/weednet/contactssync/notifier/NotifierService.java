@@ -34,6 +34,7 @@ import ro.weednet.contactssync.platform.BatchOperation;
 import ro.weednet.contactssync.platform.ContactManager;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.OperationCanceledException;
 import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -59,6 +60,10 @@ public class NotifierService extends IntentService {
 		ContactsSync app = ((ContactsSync) getApplication());
 		
 		if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
+			return;
+		}
+		
+		if (app.getSyncWifiOnly() && !app.wifiConnected()) {
 			return;
 		}
 		
