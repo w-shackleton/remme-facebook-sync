@@ -347,34 +347,38 @@ final public class NetworkUtilities {
 		String id, text;
 		JSONObject item;
 		for(int i = 0; i < data.length(); i++) {
-			item = data.getJSONObject(i);
-			id = item.optString("id");
-			if (id == null) {
-				Log.d("FacebookGetFeed", "item " + i + " has no id, skipping");
-				continue;
-			}
-			text = "no no no";
-			if (item.getString("type").equals("status")) {
-				text = item.getString("story");
-			} else if (item.getString("type").equals("photo")) {
-				text = item.getString("story");
-			} else if (item.getString("type").equals("link")) {
-				text = item.getString("story");
-			} else if (item.getString("type").equals("question")) {
-				text = item.getString("story");
-			} else {
-				continue;
-			}
-			
 			try {
-				timestamp = formatter.parse(item.getString("updated_time")).getTime();
-			} catch (java.text.ParseException e) {
-				e.printStackTrace();
-				timestamp = System.currentTimeMillis();
+				item = data.getJSONObject(i);
+				id = item.optString("id");
+				if (id == null) {
+					Log.d("FacebookGetFeed", "item " + i + " has no id, skipping");
+					continue;
+				}
+				text = "no no no";
+				if (item.getString("type").equals("status")) {
+					text = item.has("story") ? item.getString("story") : item.getString("message");
+				} else if (item.getString("type").equals("photo")) {
+					text = item.getString("story");
+				} else if (item.getString("type").equals("link")) {
+					text = item.getString("story");
+				} else if (item.getString("type").equals("question")) {
+					text = item.getString("story");
+				} else {
+					continue;
+				}
+				
+				try {
+					timestamp = formatter.parse(item.getString("updated_time")).getTime();
+				} catch (java.text.ParseException e) {
+					e.printStackTrace();
+					timestamp = System.currentTimeMillis();
+				}
+				Log.d("FacebookGetFeed", "item " + i + " - " + id + ": " + text);
+				Log.d("FacebookGetFeed", "timestamp: " + timestamp);
+				list.add(new ContactStreamItem(contact, id, text, timestamp));
+			} catch (JSONException e) {
+				Log.d("FacebookGetFeed", "Exception: " + e.getMessage());
 			}
-			Log.d("FacebookGetFeed", "item " + i + " - " + id + ": " + text);
-			Log.d("FacebookGetFeed", "timestamp: " + timestamp);
-			list.add(new ContactStreamItem(contact, id, text, timestamp));
 		}
 		
 		return list;
