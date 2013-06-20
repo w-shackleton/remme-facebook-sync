@@ -27,7 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.appbrain.AppBrain;
+import com.applovin.adview.AppLovinInterstitialAd;
+import com.applovin.adview.AppLovinInterstitialAdDialog;
+import com.applovin.sdk.AppLovinAd;
+import com.applovin.sdk.AppLovinAdDisplayListener;
+import com.applovin.sdk.AppLovinAdLoadListener;
+import com.applovin.sdk.AppLovinSdk;
 
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
@@ -149,6 +154,16 @@ public class Preferences extends PreferenceActivity {
 		super.onCreate(icicle);
 		//TODO: use current/selected account (not the first one)
 		// Log.d("pref-bundle", icicle != null ? icicle.toString() : "null");
+		
+		AppLovinSdk.initializeSdk(this);
+		AppLovinSdk.getInstance(this);
+		
+		ContactsSync app = ContactsSync.getInstance();
+		
+		if (!app.getDisableAds()) {
+			addPreferencesFromResource(R.xml.applovin);
+		}
+		
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
 		addPreferencesFromResource(R.xml.preferences_other);
@@ -271,10 +286,34 @@ public class Preferences extends PreferenceActivity {
 		ContactsSync app = ContactsSync.getInstance();
 		
 		if (!app.getDisableAds()) {
-			AppBrain.getAds().maybeShowInterstitial(this);
+			AppLovinInterstitialAdDialog ad = AppLovinInterstitialAd.create(
+				AppLovinSdk.getInstance(Preferences.this), Preferences.this);
+			ad.setAdLoadListener(new AppLovinAdLoadListener() {
+				@Override
+				public void failedToReceiveAd(int arg0) {
+					finish();
+				}
+			
+			@Override
+			public void adReceived(AppLovinAd arg0) {
+				
+			}
+			});
+			ad.setAdDisplayListener(new AppLovinAdDisplayListener() {
+				@Override
+				public void adHidden(AppLovinAd arg0) {
+					finish();
+				}
+				
+				@Override
+				public void adDisplayed(AppLovinAd arg0) {
+					
+				}
+			});
+			ad.show();
+		} else {
+			super.onBackPressed();
 		}
-		
-		finish();
 	}
 	
 	Preference.OnPreferenceChangeListener syncFreqChange = new Preference.OnPreferenceChangeListener() {
