@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.Toast;
 
@@ -506,6 +507,9 @@ public class GlobalFragment extends PreferenceFragment {
 			try {
 				ContactsSync app = ContactsSync.getInstance();
 				app.setDisableAds((Boolean) newValue);
+				
+				((LinearLayout) getActivity().findViewById(R.id.ad_container)).setVisibility(View.GONE);
+				
 				return true;
 			} catch (Exception e) {
 				Log.d("contactsync-preferences", "error: " + e.getMessage());

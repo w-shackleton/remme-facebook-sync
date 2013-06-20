@@ -22,7 +22,12 @@
  */
 package ro.weednet.contactssync.activities;
 
-import com.appbrain.AppBrain;
+import com.applovin.adview.AppLovinInterstitialAd;
+import com.applovin.adview.AppLovinInterstitialAdDialog;
+import com.applovin.sdk.AppLovinAd;
+import com.applovin.sdk.AppLovinAdDisplayListener;
+import com.applovin.sdk.AppLovinAdLoadListener;
+import com.applovin.sdk.AppLovinSdk;
 
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.R;
@@ -45,6 +50,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class Preferences extends Activity {
@@ -87,6 +93,20 @@ public class Preferences extends Activity {
 		super.onCreate(icicle);
 		
 		setContentView(R.layout.preferences);
+		
+		
+		AppLovinSdk.initializeSdk(this);
+		AppLovinSdk.getInstance(this);
+		
+		ContactsSync app = ContactsSync.getInstance();
+		
+		if (!app.getDisableAds()) {
+			LinearLayout adContainer = (LinearLayout) findViewById(R.id.ad_container);
+			View ad = getLayoutInflater().inflate(R.layout.applovin, null);
+			adContainer.addView(ad);
+		} else {
+			((LinearLayout) findViewById(R.id.ad_container)).setVisibility(View.GONE);
+		}
 		
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		mFragment = new GlobalFragment();
@@ -176,10 +196,34 @@ public class Preferences extends Activity {
 		ContactsSync app = ContactsSync.getInstance();
 		
 		if (!app.getDisableAds()) {
-			AppBrain.getAds().maybeShowInterstitial(this);
+			AppLovinInterstitialAdDialog ad = AppLovinInterstitialAd.create(
+					AppLovinSdk.getInstance(Preferences.this), Preferences.this);
+			ad.setAdLoadListener(new AppLovinAdLoadListener() {
+				@Override
+				public void failedToReceiveAd(int arg0) {
+					finish();
+				}
+				
+				@Override
+				public void adReceived(AppLovinAd arg0) {
+					
+				}
+			});
+			ad.setAdDisplayListener(new AppLovinAdDisplayListener() {
+				@Override
+				public void adHidden(AppLovinAd arg0) {
+					finish();
+				}
+				
+				@Override
+				public void adDisplayed(AppLovinAd arg0) {
+					
+				}
+			});
+			ad.show();
+		} else {
+			super.onBackPressed();
 		}
-		
-		finish();
 	}
 	
 	protected void updateStatusMessage(Account account, int code) {
