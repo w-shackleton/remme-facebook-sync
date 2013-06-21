@@ -13,6 +13,7 @@
 	
 	<string name="add_account">Add account</string>
 	<string name="exit">Exit</string>
+	<string name="via_facebook">via Facebook</string>
 	
 	<string name="prefs_on">On</string>
 	<string name="prefs_off">Off</string>

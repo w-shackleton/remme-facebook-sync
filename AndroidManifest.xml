@@ -22,6 +22,8 @@
 	<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.READ_SOCIAL_STREAM" />
+	<uses-permission android:name="android.permission.WRITE_SOCIAL_STREAM" />
 	
 	<application
 		android:name="ro.weednet.ContactsSync"
