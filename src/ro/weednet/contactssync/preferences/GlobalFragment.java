@@ -44,7 +44,7 @@ public class GlobalFragment extends PreferenceFragment {
 			add(new HashMap<String, String> () { { put("name", "I am getting a lot of connection errors. What should I do?"); }; });
 			add(new HashMap<String, String> () { { put("name", "I am getting a lot of sign-in errors. What should I do?"); }; });
 			add(new HashMap<String, String> () { { put("name", "The picture quality is crappy. Why?"); }; });
-			add(new HashMap<String, String> () { { put("name", "Birthdays are incorrect or missing."); }; });
+			add(new HashMap<String, String> () { { put("name", "This app used to sync birthdays and status updates. What happened?"); }; });
 		}
 	};
 	@SuppressWarnings("serial")
@@ -93,8 +93,7 @@ public class GlobalFragment extends PreferenceFragment {
 			});
 			add(new ArrayList<Map<String, String>>() {
 				{
-					add(new HashMap<String, String> () { { put("name", "I am sorry but birthdays only work on some devices."); }; });
-					add(new HashMap<String, String> () { { put("name", "In future updates this might be fixed, but until then, if it doesn't work properly just disable the option."); }; });
+					add(new HashMap<String, String> () { { put("name", "Facebook forbade me from using other information except the name and picture."); }; });
 				}
 			});
 		}
