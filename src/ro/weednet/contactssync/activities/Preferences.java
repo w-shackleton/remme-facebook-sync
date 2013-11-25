@@ -60,10 +60,6 @@ public class Preferences extends Activity {
 	public final static boolean DEFAULT_SYNC_ALL = false;
 	public final static boolean DEFAULT_SYNC_WIFI_ONLY = false;
 	public final static boolean DEFAULT_JOIN_BY_ID = false;
-	public final static boolean DEFAULT_SYNC_BIRTHDAYS = false;
-	public final static int DEFAULT_BIRTHDAY_FORMAT = RawContact.BIRTHDAY_FORMATS.GLOBAL;
-	public final static boolean DEFAULT_SYNC_STATUSES = true;
-	public final static boolean DEFAULT_SYNC_EMAILS = true;
 	public final static boolean DEFAULT_SHOW_NOTIFICATIONS = false;
 	public final static int DEFAULT_CONNECTION_TIMEOUT = 60;
 	public final static boolean DEFAULT_DISABLE_ADS = false;

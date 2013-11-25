@@ -29,14 +29,6 @@
 	<string name="prefs_sync_all_summary">Synchronize all contacts or only existing contacts</string>
 	<string name="prefs_sync_wifi_only_title">Sync only on wifi</string>
 	<string name="prefs_sync_wifi_only_summary">Synchronize only when you are connected to a wifi network</string>
-	<string name="prefs_sync_statuses_title">Sync statuses</string>
-	<string name="prefs_sync_statuses_summary">Import your friends\' statuses (only status updates, not comments, links, checkings, etc)</string>
-	<string name="prefs_sync_emails_title">Sync emails</string>
-	<string name="prefs_sync_emails_summary">Import facebook emails</string>
-	<string name="prefs_sync_birthdays_title">Sync birthdays</string>
-	<string name="prefs_sync_birthdays_summary">Add birthdays to your contacts</string>
-	<string name="prefs_sync_birthday_format_title">Birthday format</string>
-	<string name="prefs_sync_birthday_format_summary"></string>
 	<string name="prefs_sync_join_by_id_title">Match contacts by Facebook ID</string>
 	<string name="prefs_sync_join_by_id_summary">Join contacts with different names by using the Facebook ID from Notes field</string>
 	
@@ -61,7 +53,7 @@
 	<string name="prefs_disable_ads_summary"></string>
 	
 	<string name="prefs_cat_about_title">About</string>
-	<string name="prefs_about_title">Copyright &#169; 2012 WeedNET</string>
+	<string name="prefs_about_title">Copyright &#169; 2013 WeedNET</string>
 	<string name="prefs_about_summary">Danut Chereches</string>
 	<string name="prefs_rate_app_title">Rate app</string>
 	<string name="prefs_rate_app_summary">Rate application on Android Market</string>

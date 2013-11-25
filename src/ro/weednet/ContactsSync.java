@@ -47,10 +47,6 @@ public class ContactsSync extends Application {
 	private boolean mFullSync;
 	private boolean mSyncWifiOnly;
 	private boolean mJoinById;
-	private boolean mSyncBirthdays;
-	private int mBirthdayFormat;
-	private boolean mSyncStatuses;
-	private boolean mSyncEmails;
 	private boolean mShowNotifications;
 	private int mConnTimeout;
 	private boolean mDisableAds;
@@ -100,18 +96,6 @@ public class ContactsSync extends Application {
 	public boolean getJoinById() {
 		return mJoinById;
 	}
-	public boolean getSyncBirthdays() {
-		return mSyncBirthdays;
-	}
-	public int getBirthdayFormat() {
-		return mBirthdayFormat;
-	}
-	public boolean getSyncStatuses() {
-		return mSyncStatuses;
-	}
-	public boolean getSyncEmails() {
-		return mSyncEmails;
-	}
 	public boolean getFullSync() {
 		return mFullSync;
 	}
@@ -160,20 +144,6 @@ public class ContactsSync extends Application {
 	public void setJoinById(boolean value) {
 		mJoinById = value;
 	}
-	public void setSyncBirthdays(boolean value) {
-		mSyncBirthdays = value;
-	}
-	public void setBirthdayFormat(int value) {
-		if (value >= 0 || value <= 4) {
-			mBirthdayFormat = value;
-		}
-	}
-	public void setSyncStatuses(boolean value) {
-		mSyncStatuses = value;
-	}
-	public void setSyncEmails(boolean value) {
-		mSyncEmails = value;
-	}
 	public void setShowNotifications(boolean value) {
 		mShowNotifications = value;
 	}
@@ -218,14 +188,6 @@ public class ContactsSync extends Application {
 		mSyncAll = settings.getBoolean("sync_all", Preferences.DEFAULT_SYNC_ALL);
 		mSyncWifiOnly = settings.getBoolean("sync_wifi_only", Preferences.DEFAULT_SYNC_WIFI_ONLY);
 		mJoinById = settings.getBoolean("sync_join_by_id", Preferences.DEFAULT_JOIN_BY_ID);
-		mSyncBirthdays = settings.getBoolean("sync_birthdays", Preferences.DEFAULT_SYNC_BIRTHDAYS);
-		try {
-			mBirthdayFormat = Integer.parseInt(settings.getString("birthday_format", Integer.toString(Preferences.DEFAULT_BIRTHDAY_FORMAT)));
-		} catch (NumberFormatException e) {
-			mBirthdayFormat = Preferences.DEFAULT_BIRTHDAY_FORMAT;
-		}
-		mSyncStatuses = settings.getBoolean("sync_statuses", Preferences.DEFAULT_SYNC_STATUSES);
-		mSyncEmails = settings.getBoolean("sync_emails", Preferences.DEFAULT_SYNC_EMAILS);
 		mFullSync = settings.getBoolean("full_sync", false);
 		mShowNotifications = settings.getBoolean("show_notif", Preferences.DEFAULT_SHOW_NOTIFICATIONS);
 		try {
@@ -245,10 +207,6 @@ public class ContactsSync extends Application {
 		editor.putBoolean("sync_all", mSyncAll);
 		editor.putBoolean("sync_wifi_only", mSyncWifiOnly);
 		editor.putBoolean("sync_join_by_id", mJoinById);
-		editor.putBoolean("sync_birthdays", mSyncBirthdays);
-		editor.putString("birthday_format", Integer.toString(mBirthdayFormat));
-		editor.putBoolean("sync_statuses", mSyncStatuses);
-		editor.putBoolean("sync_emails", mSyncEmails);
 		editor.putBoolean("full_sync", mFullSync);
 		editor.putString("conn_timeout", Integer.toString(mConnTimeout));
 		editor.putBoolean("disable_ads", mDisableAds);

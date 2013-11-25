@@ -55,10 +55,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -168,14 +165,7 @@ final public class NetworkUtilities {
 			album_picture = false;
 		}
 		
-		String fields = "uid, username, first_name, last_name, " + pic_size;
-		
-		if (app.getSyncStatuses() && app.getSyncType() == ContactsSync.SyncType.LEGACY) {
-			fields += ", status";
-		}
-		if (app.getSyncBirthdays()) {
-			fields += ", birthday_date";
-		}
+		String fields = "uid, first_name, last_name, " + pic_size;
 		
 		boolean more = true;
 		int limit;
@@ -239,26 +229,6 @@ final public class NetworkUtilities {
 					if (album_picture && serverImages.containsKey(contact.getString("uid"))) {
 						contact.put("picture", serverImages.get(contact.getString("uid")).getString("src_big"));
 					}
-					if (contact.has("birthday_date") && contact.getString("birthday_date") != null
-					 && app.getSyncBirthdays() && app.getBirthdayFormat() != RawContact.BIRTHDAY_FORMATS.DEFAULT) {
-						try {
-							DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-							Date date = formatter.parse(contact.getString("birthday_date"));
-							switch(ContactsSync.getInstance().getBirthdayFormat()) {
-								case RawContact.BIRTHDAY_FORMATS.GLOBAL:
-									contact.put("birthday_date",new SimpleDateFormat("yyyy-MM-dd").format(date));
-									break;
-								case RawContact.BIRTHDAY_FORMATS.US:
-									//already there
-									break;
-								case RawContact.BIRTHDAY_FORMATS.EU:
-									contact.put("birthday_date",new SimpleDateFormat("dd/MM/yyyy").format(date));
-									break;
-							}
-						} catch (java.text.ParseException e) {
-							contact.remove("birthday_date");
-						}
-					}
 					RawContact rawContact = RawContact.valueOf(contact);
 					if (rawContact != null) {
 						serverList.add(rawContact);
@@ -310,78 +280,6 @@ final public class NetworkUtilities {
 		String image = response.getGraphObject().getInnerJSONObject().getJSONObject("data").getString("url");
 		
 		return new ContactPhoto(contact, image, 0);
-	}
-	
-	@SuppressLint("SimpleDateFormat")
-	public List<ContactStreamItem> getContactStreamItems(RawContact contact, int since)
-			throws IOException, AuthenticationException, JSONException {
-		
-		Bundle params = new Bundle();
-		//ContactsSync app = ContactsSync.getInstance();
-		//params.putInt("timeout", app.getConnectionTimeout() * 1000);
-		params.putInt("since", since);
-		Request request = new Request(mSession, contact.getUid() + "/feed", params, HttpMethod.GET);
-		Response response = request.executeAndWait();
-		
-		if (response == null) {
-			throw new IOException();
-		}
-		if (response.getGraphObject() == null) {
-			if (response.getError() != null) {
-				if (response.getError().getErrorCode() == 190) {
-					throw new AuthenticationException();
-				} else {
-					throw new ParseException(response.getError().getErrorMessage());
-				}
-			} else {
-				throw new ParseException();
-			}
-		}
-		
-		Log.d("FacebookGetFeed", "response: " + response.getGraphObject().getInnerJSONObject().toString());
-		JSONArray data = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-		List<ContactStreamItem> list = new ArrayList<ContactStreamItem>();
-		long timestamp;
-		String id, text;
-		JSONObject item;
-		for(int i = 0; i < data.length(); i++) {
-			try {
-				item = data.getJSONObject(i);
-				id = item.optString("id");
-				if (id == null) {
-					Log.d("FacebookGetFeed", "item " + i + " has no id, skipping");
-					continue;
-				}
-				text = "no no no";
-				if (item.getString("type").equals("status")) {
-					text = item.has("story") ? item.getString("story") : item.getString("message");
-				} else if (item.getString("type").equals("photo")) {
-					text = item.getString("story");
-				} else if (item.getString("type").equals("link")) {
-					text = item.getString("story");
-				} else if (item.getString("type").equals("question")) {
-					text = item.getString("story");
-				} else {
-					continue;
-				}
-				
-				try {
-					timestamp = formatter.parse(item.getString("updated_time")).getTime();
-				} catch (java.text.ParseException e) {
-					e.printStackTrace();
-					timestamp = System.currentTimeMillis();
-				}
-				Log.d("FacebookGetFeed", "item " + i + " - " + id + ": " + text);
-				Log.d("FacebookGetFeed", "timestamp: " + timestamp);
-				list.add(new ContactStreamItem(contact, id, text, timestamp));
-			} catch (JSONException e) {
-				Log.d("FacebookGetFeed", "Exception: " + e.getMessage());
-			}
-		}
-		
-		return list;
 	}
 	
 	/**

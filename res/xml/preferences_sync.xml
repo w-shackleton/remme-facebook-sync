@@ -33,29 +33,6 @@
 			android:summary="@string/prefs_sync_wifi_only_summary"
 			android:title="@string/prefs_sync_wifi_only_title" />
 		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="sync_emails"
-			android:summary="@string/prefs_sync_emails_summary"
-			android:title="@string/prefs_sync_emails_title" />
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="sync_statuses"
-			android:summary="@string/prefs_sync_statuses_summary"
-			android:title="@string/prefs_sync_statuses_title" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="sync_birthdays"
-			android:summary="@string/prefs_sync_birthdays_summary"
-			android:title="@string/prefs_sync_birthdays_title" />
-		<ListPreference
-			android:defaultValue="1"
-			android:entries="@array/prefs_birthday_format_entries"
-			android:entryValues="@array/prefs_birthday_format_values"
-			android:key="birthday_format"
-			android:summary="@string/prefs_sync_birthday_format_summary"
-			android:title="@string/prefs_sync_birthday_format_title"
-			android:dependency="sync_birthdays" />
-		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="sync_join_by_id"
 			android:summary="@string/prefs_sync_join_by_id_summary"

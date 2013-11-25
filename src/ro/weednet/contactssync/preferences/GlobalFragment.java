@@ -141,10 +141,6 @@ public class GlobalFragment extends PreferenceFragment {
 		findPreference("sync_all").setOnPreferenceChangeListener(syncAllChange);
 		findPreference("sync_wifi_only").setOnPreferenceChangeListener(syncWifiOnlyChange);
 		findPreference("sync_join_by_id").setOnPreferenceChangeListener(syncJoinByIdChange);
-		findPreference("sync_birthdays").setOnPreferenceChangeListener(syncBirthdaysChange);
-		findPreference("birthday_format").setOnPreferenceChangeListener(birthdayFormatChange);
-		findPreference("sync_statuses").setOnPreferenceChangeListener(syncStatusesChange);
-		findPreference("sync_emails").setOnPreferenceChangeListener(syncEmailsChange);
 	}
 	protected void setTroubleshootEvents() {
 		findPreference("faq").setOnPreferenceClickListener(faqClick);
@@ -286,73 +282,6 @@ public class GlobalFragment extends PreferenceFragment {
 			try {
 				ContactsSync app = ContactsSync.getInstance();
 				app.setJoinById((Boolean) newValue);
-				return true;
-			} catch (Exception e) {
-				Log.d("contactsync-preferences", "error: " + e.getMessage());
-				return false;
-			}
-		}
-	};
-	Preference.OnPreferenceChangeListener syncBirthdaysChange = new Preference.OnPreferenceChangeListener() {
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			try {
-				final ContactsSync app = ContactsSync.getInstance();
-				
-				if ((Boolean) newValue == true) {
-					new AlertDialog.Builder(GlobalFragment.this.getActivity())
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setTitle("Confirm")
-					.setMessage("This feature only works on some devices.\nIt may even cause crashes or freezes on few devices.\nAre you sure you want to continue?")
-					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							app.setSyncBirthdays(true);
-							((CheckBoxPreference) findPreference("sync_birthdays")).setChecked(true);
-						}
-					})
-					.setNegativeButton("No", null)
-					.show();
-					return false;
-				} else {
-					app.setSyncBirthdays(false);
-					return true;
-				}
-			} catch (Exception e) {
-				Log.d("contactsync-preferences", "error: " + e.getMessage());
-				return false;
-			}
-		}
-	};
-	Preference.OnPreferenceChangeListener birthdayFormatChange = new Preference.OnPreferenceChangeListener() {
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			try {
-				ContactsSync app = ContactsSync.getInstance();
-				app.setBirthdayFormat(Integer.parseInt((String) newValue));
-				app.savePreferences();
-				return true;
-			} catch (Exception e) {
-				Log.d("contactsync-preferences", "error: " + e.getMessage());
-				return false;
-			}
-		}
-	};
-	Preference.OnPreferenceChangeListener syncStatusesChange = new Preference.OnPreferenceChangeListener() {
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			try {
-				ContactsSync app = ContactsSync.getInstance();
-				app.setSyncStatuses((Boolean) newValue);
-				return true;
-			} catch (Exception e) {
-				Log.d("contactsync-preferences", "error: " + e.getMessage());
-				return false;
-			}
-		}
-	};
-	Preference.OnPreferenceChangeListener syncEmailsChange = new Preference.OnPreferenceChangeListener() {
-		public boolean onPreferenceChange(Preference preference, Object newValue) {
-			try {
-				ContactsSync app = ContactsSync.getInstance();
-				app.setSyncEmails((Boolean) newValue);
 				return true;
 			} catch (Exception e) {
 				Log.d("contactsync-preferences", "error: " + e.getMessage());

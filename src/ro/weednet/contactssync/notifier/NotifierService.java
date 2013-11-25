@@ -22,12 +22,9 @@
  */
 package ro.weednet.contactssync.notifier;
 
-import java.util.List;
-
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.Constants;
 import ro.weednet.contactssync.client.ContactPhoto;
-import ro.weednet.contactssync.client.ContactStreamItem;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import ro.weednet.contactssync.client.RawContact;
 import ro.weednet.contactssync.platform.BatchOperation;
@@ -79,7 +76,6 @@ public class NotifierService extends IntentService {
 			String uid = c.getString(c.getColumnIndex(RawContacts.SOURCE_ID));
 			RawContact rawContact = RawContact.create(rawContactId, uid);
 			long checkTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC1));
-			long feedTimestamp = c.getLong(c.getColumnIndex(RawContacts.SYNC2));
 			
 			if (System.currentTimeMillis() - checkTimestamp < Math.min(14400000, app.getSyncFrequency() * 3600000)) {
 				Log.i(TAG, "contact up to date. quiting");
@@ -87,8 +83,6 @@ public class NotifierService extends IntentService {
 			}
 			
 			Log.i(TAG, "Contact id: " + rawContactId);
-			
-		//	RawContact rawContact = null;//new RawContact(rawContactId, uid, email, firstName, lastName, birthday, statusMessage, statusTimestamp, avatarUrl, syncState);
 			
 			AccountManager am = AccountManager.get(this);
 			Account[] accounts = am.getAccountsByType(accountType);
@@ -119,20 +113,6 @@ public class NotifierService extends IntentService {
 				} catch (Exception e) {
 					Log.i(TAG, "photo update error: " + e.getMessage());
 					e.printStackTrace();
-				}
-				
-				if (app.getSyncStatuses()) {
-					try {
-						List<ContactStreamItem> items = nu.getContactStreamItems(rawContact, (int) (feedTimestamp/1000 + 1));
-					//	int numPhotos = ContactManager.getStreamItemLimit(this);
-						if (items.size() > 0) {
-							ContactManager.updateContactFeed(this, resolver, account,
-								rawContactId, items, feedTimestamp,batchOperation);
-						}
-					} catch (Exception e) {
-						Log.i(TAG, "stream update error: " + e.getMessage());
-						e.printStackTrace();
-					}
 				}
 				
 				batchOperation.execute();

@@ -29,14 +29,9 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds;
-import android.provider.ContactsContract.CommonDataKinds.Email;
-import android.provider.ContactsContract.CommonDataKinds.Event;
-import android.provider.ContactsContract.CommonDataKinds.Im;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Contacts;
@@ -44,12 +39,9 @@ import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.DisplayPhoto;
 import android.provider.ContactsContract.Groups;
 import android.provider.ContactsContract.RawContacts;
-import android.provider.ContactsContract.StatusUpdates;
-import android.provider.ContactsContract.StreamItemPhotos;
 import android.provider.ContactsContract.StreamItems;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,9 +53,7 @@ import org.apache.http.auth.AuthenticationException;
 import org.json.JSONException;
 
 import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.R;
 import ro.weednet.contactssync.client.ContactPhoto;
-import ro.weednet.contactssync.client.ContactStreamItem;
 import ro.weednet.contactssync.client.NetworkUtilities;
 import ro.weednet.contactssync.client.RawContact;
 
@@ -281,17 +271,6 @@ public class ContactManager {
 		batchOperation.execute();
 	}
 	
-	public static void updateStatusMessages(Context context, List<RawContact> rawContacts) {
-		final ContentResolver resolver = context.getContentResolver();
-		final BatchOperation batchOperation = new BatchOperation(context, resolver);
-		for (RawContact rawContact : rawContacts) {
-			if (rawContact.getStatus() != null) {
-				updateContactStatus(context, rawContact, batchOperation);
-			}
-		}
-		batchOperation.execute();
-	}
-	
 	public static void deleteContacts(Context context, List<RawContact> localContacts) {
 		final ContentResolver resolver = context.getContentResolver();
 		final BatchOperation batchOperation = new BatchOperation(context, resolver);
@@ -344,14 +323,6 @@ public class ContactManager {
 				.addGroupMembership(groupId)
 				.addAvatar(rawContact.getAvatarUrl());
 		
-		if (ContactsSync.getInstance().getSyncEmails()) {
-			contactOp.addEmail(rawContact.getEmail());
-		}
-		
-		if (ContactsSync.getInstance().getSyncBirthdays()) {
-			contactOp.addBirthday(rawContact.getBirthday());
-		}
-		
 		// If we have a serverId, then go ahead and create our status profile.
 		// Otherwise skip it - and we'll create it after we sync-up to the
 		// server later on.
@@ -365,12 +336,7 @@ public class ContactManager {
 			long rawContactId, BatchOperation batchOperation) {
 		
 		ContactsSync app = ContactsSync.getInstance();
-		boolean existingBirthday = false;
 		boolean existingAvatar = false;
-		boolean existingEmail = false;
-	//	boolean existingCellPhone = false;
-	//	boolean existingHomePhone = false;
-	//	boolean existingWorkPhone = false;
 		
 		final Cursor c = resolver.query(DataQuery.CONTENT_URI,
 				DataQuery.PROJECTION, DataQuery.SELECTION,
@@ -408,18 +374,6 @@ public class ContactManager {
 								"5345345", uri);
 					}
 				*/
-				} else if (app.getSyncEmails()
-				        && mimeType.equals(Email.CONTENT_ITEM_TYPE)) {
-					existingEmail = true;
-					contactOp.updateEmail(rawContact.getEmail(),
-							c.getString(DataQuery.COLUMN_EMAIL_ADDRESS), uri);
-				} else if (app.getSyncBirthdays()
-				        && mimeType.equals(Event.CONTENT_ITEM_TYPE)) {
-					if (c.getInt(DataQuery.COLUMN_BIRTHDAY_TYPE) == Event.TYPE_BIRTHDAY) {
-						existingBirthday = true;
-						contactOp.updateBirthday(rawContact.getBirthday(),
-							c.getString(DataQuery.COLUMN_BIRTHDAY_DATE), uri);
-					}
 				} else if (mimeType.equals(Photo.CONTENT_ITEM_TYPE)) {
 					existingAvatar = true;
 					if (app.getSyncType() == ContactsSync.SyncType.LEGACY) {
@@ -432,33 +386,10 @@ public class ContactManager {
 			c.close();
 		}
 		
-		// Add the cell phone, if present and not updated above
-	//	if (!existingCellPhone) {
-	//		contactOp.addPhone("34342", Phone.TYPE_MOBILE);
-	//	}
-		// Add the home phone, if present and not updated above
-	//	if (!existingHomePhone) {
-	//		contactOp.addPhone("34342", Phone.TYPE_HOME);
-	//	}
-		
-		// Add the work phone, if present and not updated above
-	//	if (!existingWorkPhone) {
-	//		contactOp.addPhone("34342", Phone.TYPE_WORK);
-	//	}
-		// Add the email address, if present and not updated above
-		if (app.getSyncEmails()
-		 && !existingEmail) {
-			contactOp.addEmail(rawContact.getEmail());
-		}
 		// Add the avatar if we didn't update the existing avatar
 		if (app.getSyncType() != ContactsSync.SyncType.HARD
 		 && !existingAvatar) {
 			contactOp.addAvatar(rawContact.getAvatarUrl());
-		}
-		// Add the birthday, if present and not updated above
-		if (app.getSyncBirthdays()
-		 && !existingBirthday) {
-			contactOp.addBirthday(rawContact.getBirthday());
 		}
 		
 		// If we don't have a status profile, then create one. This could
@@ -492,37 +423,6 @@ public class ContactManager {
 		contactOp.updateSyncTimestamp1(System.currentTimeMillis(), uri);
 	}
 	
-	public static void updateContactFeed(Context context, ContentResolver resolver, Account account,
-			long rawContactId, List<ContactStreamItem> items, long timestamp, BatchOperation batchOperation) {
-		
-		for (ContactStreamItem item : items) {
-			ContactManager.addStreamItem(context, resolver, account, rawContactId, item, batchOperation);
-			if (item.getTimestamp() > timestamp) {
-				timestamp = item.getTimestamp();
-			}
-		}
-		
-		final ContactOperations contactOp = ContactOperations.updateExistingContact(context, rawContactId, true, batchOperation);
-		
-		Log.d(TAG, "updating feed timestamp");
-		final Uri uri = ContentUris.withAppendedId(RawContacts.CONTENT_URI, rawContactId);
-		contactOp.updateSyncTimestamp2(timestamp, uri);
-	}
-	public static void addStreamItem(Context context, ContentResolver resolver, Account account,
-			long rawContactId, ContactStreamItem item, BatchOperation batchOperation){
-		
-		addContactStreamItem(context, rawContactId, account, item.getText(), item.getTimestamp(), batchOperation);
-		/*
-		List<Uri> uris = batchOperation.execute();
-		if (uris.size() > 0) {
-			Uri uri = uris.get(0);
-			Log.e("aaaaaaaaaaaaaaaaaaaa", "fdas"+uri.toString());
-			long streamItemId = Long.parseLong(uri.getPathSegments().get(uri.getPathSegments().size()-1));
-			addStreamItemPhoto(context, resolver, streamItemId, account, batchOperation);
-		}
-		*/
-	}
-	
 	public static void addAggregateException(Context context, Account account,
 			RawContact rawContact, BatchOperation batchOperation) {
 		final long rawContactId = lookupRawContact(context.getContentResolver(), account, rawContact.getUid());
@@ -538,68 +438,6 @@ public class ContactManager {
 			.withValue(ContactsContract.AggregationExceptions.TYPE, ContactsContract.AggregationExceptions.TYPE_KEEP_TOGETHER);
 		
 		batchOperation.add(builder.build());
-	}
-	
-	private static void updateContactStatus(Context context,
-			RawContact rawContact, BatchOperation batchOperation) {
-		final ContentValues values = new ContentValues();
-		
-		final String userId = rawContact.getUid();
-		// Look up the user's SyncAdapter data row
-		final long profileId = lookupProfile(context.getContentResolver(), userId);
-		
-		// Insert the activity into the stream
-		if (profileId > 0) {
-			values.put(StatusUpdates.DATA_ID, profileId);
-			values.put(StatusUpdates.STATUS, rawContact.getStatus());
-			values.put(StatusUpdates.STATUS_TIMESTAMP, rawContact.getStatusTimestamp());
-			values.put(StatusUpdates.PROTOCOL, Im.PROTOCOL_CUSTOM);
-			values.put(StatusUpdates.CUSTOM_PROTOCOL, CUSTOM_IM_PROTOCOL);
-			values.put(StatusUpdates.IM_HANDLE, userId);
-			values.put(StatusUpdates.STATUS_RES_PACKAGE, context.getPackageName());
-			values.put(StatusUpdates.STATUS_ICON, R.drawable.facebook_icon);
-			values.put(StatusUpdates.STATUS_LABEL, R.string.status_via);
-			batchOperation.add(ContactOperations
-					.newInsertCpo(StatusUpdates.CONTENT_URI, false, true)
-					.withValues(values).build());
-		}
-	}
-	
-	private static void addContactStreamItem(Context context, long rawContactId,
-		Account account, String text, long timestamp, BatchOperation batchOperation) {
-		
-		final ContentValues values = new ContentValues();
-		if (rawContactId > 0){
-			Log.e(TAG, "adding contact stream..");
-			values.put(StreamItems.RAW_CONTACT_ID, rawContactId);
-			values.put(StreamItems.TEXT, text);
-			values.put(StreamItems.COMMENTS, context.getResources().getString(R.string.via_facebook));
-			values.put(StreamItems.TIMESTAMP, timestamp);
-			values.put(StreamItems.ACCOUNT_NAME, account.name);
-			values.put(StreamItems.ACCOUNT_TYPE, account.type);
-			
-			batchOperation.add(ContactOperations.newInsertCpo(
-				StreamItems.CONTENT_URI, false, true).withValues(values).build());
-		}
-	}
-	
-	private static void addStreamItemPhoto(Context context, ContentResolver
-		resolver, long streamItemId, Account account, BatchOperation batchOperation){
-		
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.facebook_icon);
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 30, stream);
-		byte[] photoData = stream.toByteArray();
-		
-		final ContentValues values = new ContentValues();
-		values.put(StreamItemPhotos.STREAM_ITEM_ID, streamItemId);
-		values.put(StreamItemPhotos.SORT_INDEX, 1);
-		values.put(StreamItemPhotos.PHOTO, photoData);
-		values.put(StreamItems.ACCOUNT_NAME, account.name);
-		values.put(StreamItems.ACCOUNT_TYPE, account.type);
-		
-		batchOperation.add(ContactOperations.newInsertCpo(
-			StreamItems.CONTENT_PHOTO_URI, false, true).withValues(values).build());
 	}
 	
 	private static void deleteContact(Context context, long rawContactId, BatchOperation batchOperation) {

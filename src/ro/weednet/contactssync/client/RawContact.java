@@ -40,25 +40,15 @@ final public class RawContact {
 		public final static int MAX = 7;
 		public final static int MAX_SQUARE = 8;
 	};
-	public class BIRTHDAY_FORMATS {
-		public final static int DEFAULT = 0;
-		public final static int GLOBAL = 1;
-		public final static int US = 2;
-		public final static int EU = 3;
-	};
 	
 	/** The tag used to log to adb console. **/
 	private static final String TAG = "RawContact";
 	
 	private final long mRawContactId;
 	private final String mUid;
-	private final String mEmail;
 	private final String mFirstName;
 	private final String mLastName;
 	private final String mAvatarUrl;
-	private final String mBirthday;
-	private final String mStatusMessage;
-	private final long mStatusTimestamp;
 	private final long mSyncState;
 	private long mJoinContactId;
 	
@@ -67,9 +57,6 @@ final public class RawContact {
 	}
 	public String getUid() {
 		return mUid;
-	}
-	public String getEmail() {
-		return mEmail;
 	}
 	public String getFirstName() {
 		return mFirstName;
@@ -83,23 +70,11 @@ final public class RawContact {
 	public String getAvatarUrl() {
 		return mAvatarUrl;
 	}
-	public String getBirthday() {
-		return mBirthday;
-	}
 	public long getSyncState() {
 		return mSyncState;
 	}
 	public String getBestName() {
 		return getFullName();
-	}
-	public String getStatus() {
-		return getStatusMessage();
-	}
-	public String getStatusMessage() {
-		return mStatusMessage;
-	}
-	public long getStatusTimestamp() {
-		return mStatusTimestamp * 1000;
 	}
 	public long getJoinContactId() {
 		return mJoinContactId;
@@ -122,15 +97,6 @@ final public class RawContact {
 			if (!TextUtils.isEmpty(mLastName)) {
 				json.put("last_name", mLastName);
 			}
-			if (!TextUtils.isEmpty(mBirthday)) {
-				json.put("birthday_date", mBirthday);
-			}
-			if (!TextUtils.isEmpty(mStatusMessage)) {
-				JSONObject status = new JSONObject();
-				status.put("message", mStatusMessage);
-				status.put("timestamp", mStatusTimestamp);
-				json.put("status", status);
-			}
 		} catch (final Exception ex) {
 			Log.i(TAG, "Error converting RawContact to JSONObject" + ex.toString());
 		}
@@ -138,18 +104,12 @@ final public class RawContact {
 		return json;
 	}
 	
-	public RawContact(long rawContactId, String uid, String email, String firstName, String lastName, String birthday,
-			String statusMessage, long statusTimestamp, String avatarUrl,
-			long syncState) {
+	public RawContact(long rawContactId, String uid, String firstName, String lastName, String avatarUrl, long syncState) {
 		mRawContactId = rawContactId;
 		mUid = uid;
-		mEmail = email;
 		mFirstName = firstName;
 		mLastName = lastName;
 		mAvatarUrl = avatarUrl;
-		mBirthday = birthday;
-		mStatusMessage = statusMessage;
-		mStatusTimestamp = statusTimestamp;
 		mSyncState = syncState;
 		mJoinContactId = -1;
 	}
@@ -163,39 +123,24 @@ final public class RawContact {
 				throw new JSONException("JSON contact missing required 'uid' field");
 			}
 			
-			final String email = !contact.isNull("username") && contact.getString("username").length() > 0 ?
-					contact.getString("username") + "@facebook.com" : null;
 			final String firstName = !contact.isNull("first_name") ?
 					contact.getString("first_name") : null;
 			final String lastName = !contact.isNull("last_name") ?
 					contact.getString("last_name") : null;
 			final String avatarUrl = !contact.isNull("picture") ?
 					contact.getString("picture") : null;
-			final String birthDay = !contact.isNull("birthday_date") ?
-					contact.getString("birthday_date") : null;
-			String statusMessage = null;
-			long statusTimestamp = 0;
-			if (!contact.isNull("status")) {
-				try {
-					JSONObject status = contact.getJSONObject("status");
-					statusMessage = status.getString("message");
-					statusTimestamp = status.getLong("time");
-				} catch (Exception e) {
-					
-				}
-			}
 			final long syncState = !contact.isNull("x") ? contact.getLong("x") : 0;
-			return new RawContact(0, uid, email, firstName, lastName, birthDay, statusMessage, statusTimestamp, avatarUrl, syncState);
+			return new RawContact(0, uid, firstName, lastName, avatarUrl, syncState);
 		} catch (final Exception ex) {
 			Log.i(TAG, "Error parsing JSON contact object" + ex.toString());
 		}
 		return null;
 	}
 	
-	public static RawContact create(String uid, String email, String firstName, String lastName, String birthDay) {
-		return new RawContact(0, uid, email, firstName, lastName, birthDay, null, 0, null, -1);
+	public static RawContact create(String uid, String firstName, String lastName) {
+		return new RawContact(0, uid, firstName, lastName, null, -1);
 	}
 	public static RawContact create(long rawContactId, String uid) {
-		return new RawContact(rawContactId, uid, null, null, null, null, null, 0, null, -1);
+		return new RawContact(rawContactId, uid, null, null, null, -1);
 	}
 }

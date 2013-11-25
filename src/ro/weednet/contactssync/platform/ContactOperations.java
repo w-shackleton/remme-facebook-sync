@@ -30,8 +30,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Email;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.provider.ContactsContract.CommonDataKinds.GroupMembership;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
@@ -110,39 +108,6 @@ public class ContactOperations {
 		return this;
 	}
 	
-	public ContactOperations addEmail(String email) {
-		mValues.clear();
-		if (!TextUtils.isEmpty(email)) {
-			mValues.put(Email.DATA, email);
-			mValues.put(Email.TYPE, Email.TYPE_OTHER);
-			mValues.put(Email.MIMETYPE, Email.CONTENT_ITEM_TYPE);
-			addInsertOp();
-		}
-		return this;
-	}
-	
-	public ContactOperations addPhone(String phone, int phoneType) {
-		mValues.clear();
-		if (!TextUtils.isEmpty(phone)) {
-			mValues.put(Phone.NUMBER, phone);
-			mValues.put(Phone.TYPE, phoneType);
-			mValues.put(Phone.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
-			addInsertOp();
-		}
-		return this;
-	}
-	
-	public ContactOperations addBirthday(String birthday) {
-		mValues.clear();
-		if (!TextUtils.isEmpty(birthday)) {
-			mValues.put(Event.START_DATE, birthday);
-			mValues.put(Event.TYPE, Event.TYPE_BIRTHDAY);
-			mValues.put(Event.MIMETYPE, Event.CONTENT_ITEM_TYPE);
-			addInsertOp();
-		}
-		return this;
-	}
-	
 	public ContactOperations addGroupMembership(long groupId) {
 		mValues.clear();
 		mValues.put(GroupMembership.GROUP_ROW_ID, groupId);
@@ -186,26 +151,6 @@ public class ContactOperations {
 		return this;
 	}
 	
-	public ContactOperations updateEmail(String email, String existingEmail,
-			Uri uri) {
-		if (!TextUtils.equals(existingEmail, email)) {
-			mValues.clear();
-			mValues.put(Email.DATA, email);
-			addUpdateOp(uri);
-		}
-		return this;
-	}
-	
-	public ContactOperations updateBirthday(String birthday, String existingBirthday,
-			Uri uri) {
-		if (!TextUtils.equals(existingBirthday, birthday)) {
-			mValues.clear();
-			mValues.put(Event.START_DATE, birthday);
-			addUpdateOp(uri);
-		}
-		return this;
-	}
-	
 	public ContactOperations updateName(Uri uri, String existingFirstName,
 			String existingLastName, String firstName, String lastName) {
 		
@@ -241,15 +186,6 @@ public class ContactOperations {
 		mValues.clear();
 		mValues.put(RawContacts.SYNC2, timestsamp);
 		addUpdateOp(uri);
-		return this;
-	}
-	
-	public ContactOperations updatePhone(String existingNumber, String phone, Uri uri) {
-		if (!TextUtils.equals(phone, existingNumber)) {
-			mValues.clear();
-			mValues.put(Phone.NUMBER, phone);
-			addUpdateOp(uri);
-		}
 		return this;
 	}
 	

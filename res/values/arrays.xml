@@ -60,16 +60,4 @@
 		<item>5</item>
 		<item>6</item>
 	</string-array>
-	<string-array name="prefs_birthday_format_entries">
-		<item>Default (used by Facebook)</item>
-		<item>YYYY-MM-DD</item>
-		<item>MM/DD/YYYY</item>
-		<item>DD/MM/YYYY</item>
-	</string-array>
-	<string-array name="prefs_birthday_format_values">
-		<item>0</item>
-		<item>1</item>
-		<item>2</item>
-		<item>3</item>
-	</string-array>
 </resources>
