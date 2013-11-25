@@ -22,12 +22,7 @@
  */
 package ro.weednet.contactssync.activities;
 
-import com.applovin.adview.AppLovinInterstitialAd;
-import com.applovin.adview.AppLovinInterstitialAdDialog;
-import com.applovin.sdk.AppLovinAd;
-import com.applovin.sdk.AppLovinAdDisplayListener;
-import com.applovin.sdk.AppLovinAdLoadListener;
-import com.applovin.sdk.AppLovinSdk;
+import com.appbrain.AppBrain;
 
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.R;
@@ -35,7 +30,6 @@ import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
 import ro.weednet.contactssync.client.RawContact;
 import ro.weednet.contactssync.platform.ContactManager;
 import ro.weednet.contactssync.preferences.GlobalFragment;
-
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Dialog;
@@ -89,10 +83,6 @@ public class Preferences extends Activity {
 		super.onCreate(icicle);
 		
 		setContentView(R.layout.preferences);
-		
-		
-		AppLovinSdk.initializeSdk(this);
-		AppLovinSdk.getInstance(this);
 		
 		ContactsSync app = ContactsSync.getInstance();
 		
@@ -192,31 +182,8 @@ public class Preferences extends Activity {
 		ContactsSync app = ContactsSync.getInstance();
 		
 		if (!app.getDisableAds()) {
-			AppLovinInterstitialAdDialog ad = AppLovinInterstitialAd.create(
-					AppLovinSdk.getInstance(Preferences.this), Preferences.this);
-			ad.setAdLoadListener(new AppLovinAdLoadListener() {
-				@Override
-				public void failedToReceiveAd(int arg0) {
-					finish();
-				}
-				
-				@Override
-				public void adReceived(AppLovinAd arg0) {
-					
-				}
-			});
-			ad.setAdDisplayListener(new AppLovinAdDisplayListener() {
-				@Override
-				public void adHidden(AppLovinAd arg0) {
-					finish();
-				}
-				
-				@Override
-				public void adDisplayed(AppLovinAd arg0) {
-					
-				}
-			});
-			ad.show();
+			AppBrain.getAds().maybeShowInterstitial(this);
+			finish();
 		} else {
 			super.onBackPressed();
 		}
