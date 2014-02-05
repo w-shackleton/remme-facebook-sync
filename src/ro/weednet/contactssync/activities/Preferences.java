@@ -22,8 +22,6 @@
  */
 package ro.weednet.contactssync.activities;
 
-import com.appbrain.AppBrain;
-
 import ro.weednet.ContactsSync;
 import ro.weednet.contactssync.R;
 import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
@@ -174,18 +172,6 @@ public class Preferences extends Activity {
 		
 		if (mSyncObserverHandler != null) {
 			ContentResolver.removeStatusChangeListener(mSyncObserverHandler);
-		}
-	}
-	
-	@Override
-	public void onBackPressed() {
-		ContactsSync app = ContactsSync.getInstance();
-		
-		if (!app.getDisableAds()) {
-			AppBrain.getAds().maybeShowInterstitial(this);
-			finish();
-		} else {
-			super.onBackPressed();
 		}
 	}
 	
