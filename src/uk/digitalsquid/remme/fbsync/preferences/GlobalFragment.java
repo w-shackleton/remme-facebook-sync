@@ -1,14 +1,14 @@
-package ro.weednet.contactssync.preferences;
+package uk.digitalsquid.remme.fbsync.preferences;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.activities.Preferences;
-import ro.weednet.contactssync.activities.TestFacebookApi;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.R;
+import uk.digitalsquid.remme.fbsync.activities.Preferences;
+import uk.digitalsquid.remme.fbsync.activities.TestFacebookApi;
 import android.accounts.Account;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -106,7 +106,6 @@ public class GlobalFragment extends PreferenceFragment {
 		
 		addPreferencesFromResource(R.xml.preferences_sync);
 		addPreferencesFromResource(R.xml.preferences_troubleshooting);
-		addPreferencesFromResource(R.xml.preferences_other);
 		addPreferencesFromResource(R.xml.preferences_about);
 	}
 	

@@ -20,20 +20,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.syncadapter;
+package uk.digitalsquid.remme.fbsync.syncadapter;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.activities.Preferences;
-import ro.weednet.contactssync.client.NetworkUtilities;
-import ro.weednet.contactssync.client.RawContact;
-import ro.weednet.contactssync.platform.ContactManager;
+import java.io.IOException;
+import java.util.List;
 
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthenticationException;
 import org.json.JSONException;
 
+import uk.digitalsquid.remme.fbsync.Constants;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.R;
+import uk.digitalsquid.remme.fbsync.activities.Preferences;
+import uk.digitalsquid.remme.fbsync.client.NetworkUtilities;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
+import uk.digitalsquid.remme.fbsync.platform.ContactManager;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
@@ -50,9 +52,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.RawContacts;
 import android.util.Log;
-
-import java.io.IOException;
-import java.util.List;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	private static final String TAG = "SyncAdapter";

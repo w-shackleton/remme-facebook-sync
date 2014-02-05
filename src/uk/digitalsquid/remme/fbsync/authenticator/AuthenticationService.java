@@ -20,21 +20,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.platform;
+package uk.digitalsquid.remme.fbsync.authenticator;
 
-import android.provider.ContactsContract.Data;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.util.Log;
 
-public final class SyncAdapterColumns {
+public class AuthenticationService extends Service {
+	private static final String TAG = "AuthenticationService";
+	private Authenticator mAuthenticator;
 	
-	private SyncAdapterColumns() {
-		
+	@Override
+	public void onCreate() {
+		Log.v(TAG, "SyncAdapter Authentication Service started.");
+		mAuthenticator = new Authenticator(this);
 	}
 	
-	public static final String MIME_PROFILE = "vnd.android.cursor.item/vnd.ro.weednet.contactssync.profile";
+	@Override
+	public void onDestroy() {
+		Log.v(TAG, "SyncAdapter Authentication Service stopped.");
+	}
 	
-	public static final String DATA_PID = Data.DATA1;
-	
-	public static final String DATA_SUMMARY = Data.DATA2;
-	
-	public static final String DATA_DETAIL = Data.DATA3;
+	@Override
+	public IBinder onBind(Intent intent) {
+		Log.v(TAG, "getBinder()...  returning the AccountAuthenticator binder for intent " + intent);
+		return mAuthenticator.getIBinder();
+	}
 }

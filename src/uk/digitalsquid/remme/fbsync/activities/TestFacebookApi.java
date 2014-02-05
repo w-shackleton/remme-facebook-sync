@@ -20,19 +20,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.activities;
+package uk.digitalsquid.remme.fbsync.activities;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
-import ro.weednet.contactssync.client.NetworkUtilities;
-import ro.weednet.contactssync.client.RawContact;
-
+import uk.digitalsquid.remme.fbsync.Constants;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.R;
+import uk.digitalsquid.remme.fbsync.authenticator.AuthenticatorActivity;
+import uk.digitalsquid.remme.fbsync.client.NetworkUtilities;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -43,13 +42,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class TestFacebookApi extends Activity {
 	private AsyncTask<View, Void, Pair<Pair<Boolean, String>, Long>> mBackgroundTask;

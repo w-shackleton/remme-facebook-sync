@@ -20,21 +20,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.authenticator;
+package uk.digitalsquid.remme.fbsync.authenticator;
 
 import java.util.Arrays;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
-
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.activities.Preferences;
-
+import uk.digitalsquid.remme.fbsync.Constants;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.R;
+import uk.digitalsquid.remme.fbsync.activities.Preferences;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -48,6 +41,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.util.Log;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 
 /**
  * Activity which displays login screen to the user.

@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.client;
+package uk.digitalsquid.remme.fbsync.client;
 
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthenticationException;
@@ -28,8 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.authenticator.Authenticator;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.authenticator.Authenticator;
 
 import com.facebook.AccessToken;
 import com.facebook.FacebookException;

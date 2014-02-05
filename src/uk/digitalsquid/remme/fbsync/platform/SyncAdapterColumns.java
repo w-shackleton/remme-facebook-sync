@@ -20,27 +20,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.syncadapter;
+package uk.digitalsquid.remme.fbsync.platform;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
+import android.provider.ContactsContract.Data;
 
-public class SyncService extends Service {
-	private static final Object sSyncAdapterLock = new Object();
-	private static SyncAdapter sSyncAdapter = null;
+public final class SyncAdapterColumns {
 	
-	@Override
-	public void onCreate() {
-		synchronized (sSyncAdapterLock) {
-			if (sSyncAdapter == null) {
-				sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
-			}
-		}
+	private SyncAdapterColumns() {
+		
 	}
 	
-	@Override
-	public IBinder onBind(Intent intent) {
-		return sSyncAdapter.getSyncAdapterBinder();
-	}
+	public static final String MIME_PROFILE = "vnd.android.cursor.item/vnd.ro.weednet.contactssync.profile";
+	
+	public static final String DATA_PID = Data.DATA1;
+	
+	public static final String DATA_SUMMARY = Data.DATA2;
+	
+	public static final String DATA_DETAIL = Data.DATA3;
 }

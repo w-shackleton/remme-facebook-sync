@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="ro.weednet.contactssync"
+	package="uk.digitalsquid.remme.fbsync"
 	android:versionCode="46"
 	android:versionName="2.0.0">
 	
@@ -24,21 +24,20 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	
 	<application
-		android:name="ro.weednet.ContactsSync"
+		android:name="uk.digitalsquid.remme.fbsync.ContactsSync"
 		android:icon="@drawable/icon"
 		android:installLocation="internalOnly"
 		android:allowBackup="false"
 		android:label="@string/app_name">
-		<service
-			android:name=".authenticator.AuthenticationService"
+		<service android:name="uk.digitalsquid.remme.fbsync.contactssync.authenticator.AuthenticationService"
 			android:exported="false">
 			<intent-filter>
 				<action android:name="android.accounts.AccountAuthenticator" />
 			</intent-filter>
 			<meta-data
 				android:name="android.accounts.AccountAuthenticator"
-				android:resource="@xml/authenticator" />
-		</service>
+				android:resource="@xml/syncadapter" />
+			</service>
 		<service
 			android:name=".syncadapter.SyncService"
 			android:exported="false">
@@ -52,22 +51,21 @@
 				android:name="android.provider.CONTACTS_STRUCTURE"
 				android:resource="@xml/contacts" />
 		</service>
-		<service
-			android:exported="true"
+		<service android:exported="true"
 			android:name=".notifier.NotifierService" />
 		<activity
-			android:name=".authenticator.AuthenticatorActivity"
+		    android:name="uk.digitalsquid.remme.fbsync.contactssync.authenticator.AuthenticatorActivityhenticatorActivity"
 			android:configChanges="orientation"
 			android:excludeFromRecents="true"
 			android:label="@string/app_name"
 			android:theme="@android:style/Theme.Dialog">
 		</activity>
 		<activity
-			android:name=".activities.TestFacebookApi"
+		    android:name="uk.digitalsquid.remme.fbsync.activities.TestFacebookApi"
 			android:label="@string/app_name">
 		</activity>
 		<activity
-			android:name=".activities.Preferences"
+		    android:name="uk.digitalsquid.remme.fbsync.activities.Preferences"
 			android:configChanges="orientation|keyboardHidden"
 			android:launchMode="singleInstance">
 			<intent-filter>
@@ -85,7 +83,7 @@
 		</activity>
 		<activity
 			android:theme="@android:style/Theme.NoDisplay"
-			android:name=".activities.Profile">
+			android:name="uk.digitalsquid.remme.fbsync.activities.Profile">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />

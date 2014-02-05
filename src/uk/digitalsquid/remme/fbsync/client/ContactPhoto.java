@@ -20,43 +20,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.client;
+package uk.digitalsquid.remme.fbsync.client;
 
-final public class ContactStreamItem {
+final public class ContactPhoto {
 	private final long mRawContactId;
-	private final String mId;
 	private final String mUid;
-	private String mText;
 	private String mPhotoUrl;
 	private final long mTimestamp;
 	
 	public long getRawContactId() {
 		return mRawContactId;
 	}
-	public String getId() {
-		return mId;
-	}
 	public String getUid() {
 		return mUid;
-	}
-	public String getText() {
-		return mText;
 	}
 	public String getPhotoUrl() {
 		return mPhotoUrl;
 	}
 	public long getTimestamp() {
-		return mTimestamp;
+		return mTimestamp * 1000;
 	}
 	
-	public ContactStreamItem(RawContact contact, String id, String text, long timestamp) {
-		this(contact, id, text, null, timestamp);
-	}
-	public ContactStreamItem(RawContact contact, String id, String text, String photoUrl, long timestamp) {
+	public ContactPhoto(RawContact contact, String photoUrl, long timestamp) {
 		mRawContactId = contact.getRawContactId();
 		mUid = contact.getUid();
-		mId = id;
-		mText = text;
 		mPhotoUrl = photoUrl;
 		mTimestamp = timestamp;
 	}

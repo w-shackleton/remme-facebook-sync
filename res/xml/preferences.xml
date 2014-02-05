@@ -7,7 +7,7 @@
 		android:title="Account settings" >
 		<intent
 			android:action="android.intent.action.VIEW"
-			android:targetClass="ro.weednet.contactssync.activities.Preferences"
-			android:targetPackage="ro.weednet.contactssync" />
+			android:targetClass="uk.digitalsquid.remme.fbsync.activities.Preferences"
+			android:targetPackage="uk.digitalsquid.remme.fbsync" />
 	</PreferenceScreen>
 </PreferenceScreen>

@@ -20,15 +20,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.notifier;
+package uk.digitalsquid.remme.fbsync.notifier;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.client.ContactPhoto;
-import ro.weednet.contactssync.client.NetworkUtilities;
-import ro.weednet.contactssync.client.RawContact;
-import ro.weednet.contactssync.platform.BatchOperation;
-import ro.weednet.contactssync.platform.ContactManager;
+import uk.digitalsquid.remme.fbsync.Constants;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.client.ContactPhoto;
+import uk.digitalsquid.remme.fbsync.client.NetworkUtilities;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
+import uk.digitalsquid.remme.fbsync.platform.BatchOperation;
+import uk.digitalsquid.remme.fbsync.platform.ContactManager;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.IntentService;

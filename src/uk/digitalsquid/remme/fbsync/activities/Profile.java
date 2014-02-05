@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.activities;
+package uk.digitalsquid.remme.fbsync.activities;
 
 import android.app.Activity;
 import android.content.Intent;

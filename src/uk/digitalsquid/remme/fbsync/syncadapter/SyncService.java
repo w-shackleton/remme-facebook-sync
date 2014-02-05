@@ -20,31 +20,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.client;
+package uk.digitalsquid.remme.fbsync.syncadapter;
 
-final public class ContactPhoto {
-	private final long mRawContactId;
-	private final String mUid;
-	private String mPhotoUrl;
-	private final long mTimestamp;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+
+public class SyncService extends Service {
+	private static final Object sSyncAdapterLock = new Object();
+	private static SyncAdapter sSyncAdapter = null;
 	
-	public long getRawContactId() {
-		return mRawContactId;
-	}
-	public String getUid() {
-		return mUid;
-	}
-	public String getPhotoUrl() {
-		return mPhotoUrl;
-	}
-	public long getTimestamp() {
-		return mTimestamp * 1000;
+	@Override
+	public void onCreate() {
+		synchronized (sSyncAdapterLock) {
+			if (sSyncAdapter == null) {
+				sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+			}
+		}
 	}
 	
-	public ContactPhoto(RawContact contact, String photoUrl, long timestamp) {
-		mRawContactId = contact.getRawContactId();
-		mUid = contact.getUid();
-		mPhotoUrl = photoUrl;
-		mTimestamp = timestamp;
+	@Override
+	public IBinder onBind(Intent intent) {
+		return sSyncAdapter.getSyncAdapterBinder();
 	}
 }

@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.platform;
+package uk.digitalsquid.remme.fbsync.platform;
 
 import android.accounts.Account;
 import android.content.ContentProviderOperation;
@@ -52,10 +52,10 @@ import java.util.Set;
 import org.apache.http.auth.AuthenticationException;
 import org.json.JSONException;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.client.ContactPhoto;
-import ro.weednet.contactssync.client.NetworkUtilities;
-import ro.weednet.contactssync.client.RawContact;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.client.ContactPhoto;
+import uk.digitalsquid.remme.fbsync.client.NetworkUtilities;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
 
 public class ContactManager {
 	public static final String CUSTOM_IM_PROTOCOL = "fb";

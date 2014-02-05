@@ -20,14 +20,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.activities;
+package uk.digitalsquid.remme.fbsync.activities;
 
-import ro.weednet.ContactsSync;
-import ro.weednet.contactssync.R;
-import ro.weednet.contactssync.authenticator.AuthenticatorActivity;
-import ro.weednet.contactssync.client.RawContact;
-import ro.weednet.contactssync.platform.ContactManager;
-import ro.weednet.contactssync.preferences.GlobalFragment;
+import uk.digitalsquid.remme.fbsync.ContactsSync;
+import uk.digitalsquid.remme.fbsync.R;
+import uk.digitalsquid.remme.fbsync.authenticator.AuthenticatorActivity;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
+import uk.digitalsquid.remme.fbsync.platform.ContactManager;
+import uk.digitalsquid.remme.fbsync.preferences.GlobalFragment;
 import android.accounts.Account;
 import android.app.Activity;
 import android.app.Dialog;

@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.platform;
+package uk.digitalsquid.remme.fbsync.platform;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;

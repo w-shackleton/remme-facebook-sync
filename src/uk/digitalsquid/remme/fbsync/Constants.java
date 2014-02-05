@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync;
+package uk.digitalsquid.remme.fbsync;
 
 public class Constants {
 	/**

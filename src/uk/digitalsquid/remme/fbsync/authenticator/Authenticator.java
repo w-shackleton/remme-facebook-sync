@@ -20,10 +20,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.authenticator;
+package uk.digitalsquid.remme.fbsync.authenticator;
 
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.client.NetworkUtilities;
+import uk.digitalsquid.remme.fbsync.Constants;
+import uk.digitalsquid.remme.fbsync.client.NetworkUtilities;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;

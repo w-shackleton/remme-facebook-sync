@@ -20,7 +20,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet.contactssync.client;
+package uk.digitalsquid.remme.fbsync.client;
 
 import android.text.TextUtils;
 import android.util.Log;

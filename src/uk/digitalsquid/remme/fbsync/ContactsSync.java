@@ -20,12 +20,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package ro.weednet;
+package uk.digitalsquid.remme.fbsync;
 
-import ro.weednet.contactssync.Constants;
-import ro.weednet.contactssync.activities.Preferences;
-import ro.weednet.contactssync.client.RawContact;
-import ro.weednet.contactssync.platform.ContactManager;
+import uk.digitalsquid.remme.fbsync.activities.Preferences;
+import uk.digitalsquid.remme.fbsync.client.RawContact;
+import uk.digitalsquid.remme.fbsync.platform.ContactManager;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Application;
