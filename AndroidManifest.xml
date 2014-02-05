@@ -87,7 +87,7 @@
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
-				<data android:mimeType="vnd.android.cursor.item/vnd.ro.weednet.contactssync.profile" />
+				<data android:mimeType="vnd.android.cursor.item/vnd.uk.digitalsquid.remme.fbsync.profile" />
 			</intent-filter>
 		</activity>
 		<meta-data
