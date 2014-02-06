@@ -30,7 +30,7 @@ public final class SyncAdapterColumns {
 		
 	}
 	
-	public static final String MIME_PROFILE = "vnd.android.cursor.item/vnd.ro.weednet.contactssync.profile";
+	public static final String MIME_PROFILE = "vnd.android.cursor.item/vnd.uk.digitalsquid.remme.fbsync";
 	
 	public static final String DATA_PID = Data.DATA1;
 	

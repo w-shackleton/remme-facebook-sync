@@ -37,7 +37,7 @@ public class ContactsSync extends Application {
 	public static enum SyncType {
 		SOFT, MEDIUM, HARD, LEGACY
 	}
-	public final static String NAMESPACE = "ro.weednet.contactssync_preferences";
+	public final static String NAMESPACE = "uk.digitalsquid.remme.fbsync";
 	
 	private SyncType mSyncType;
 	private int mSyncFreq;

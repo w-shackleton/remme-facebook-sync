@@ -26,10 +26,10 @@ public class Constants {
 	/**
 	 * Account type string.
 	 */
-	public static final String ACCOUNT_TYPE = "ro.weednet.contactssync";
+	public static final String ACCOUNT_TYPE = "uk.digitalsquid.remme.fbsync";
 	
 	/**
 	 * Authtoken type string.
 	 */
-	public static final String AUTHTOKEN_TYPE = "ro.weednet.contactssync";
+	public static final String AUTHTOKEN_TYPE = "uk.digitalsquid.remme.fbsync";
 }
